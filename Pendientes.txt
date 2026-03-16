@@ -1,0 +1,25 @@
+Temas Pendientes para Próxima Sesión
+
+1. Liquidaciones Choferes (Smarter Settlements)
+Automatización de Selección: El sistema debe pre-seleccionar (tildar) automáticamente los viajes que corresponden al período de pago del chofer (diario, semanal, quincenal, mensual).
+Flexibilidad: El usuario debe poder destildar viajes pre-seleccionados o agregar manualmente viajes fuera del rango si corresponde antes de generar el lote de pago.
+
+2. Cobranza Dadores (Pricing Transparency)
+Información de Regla: En el listado de viajes por dador (finance-360-collect), cada fila debe mostrar qué regla de tarifa se aplicó (ej: "KM x $500" o "Tarifa Fija").
+Objetivo: Permitir al usuario validar rápidamente si hubo aumentos o si la tarifa aplicada es la correcta sin salir de la pantalla.
+
+3. Dashboard de Viajes (New vs Credit KPI)
+Desglose en Tarjeta: La tarjeta "TOTAL VIAJES" en la sección general debe mostrar el desglose:
+Ejemplo: 6 Nuevos + 1 con Vale
+Objetivo: Claridad inmediata sobre cuántos viajes generaron deuda nueva y cuántos consumieron créditos pre-existentes.
+
+4. Auditoría de Métricas: Monto Operativo vs. Recaudación
+Análisis de Discrepancia: Investigar por qué "MONTO OPERATIVO" ($305.000) en la sección Viajes difiere de "RECAUDACIÓN MES" ($303.500) en Finance-360-Collect.
+Definición de Conceptos: Explicar qué implica cada tarjeta y si, por lógica de negocio, ambos valores deberían ser idénticos o si contemplan universos de datos distintos (ej: fletes pactados vs. lotes ya conciliados).
+
+5. Rentabilidad Neta (Dashboard Detallado y PDF)
+Mejora de Visualización: En el Dashboard de Rentabilidad Neta, los indicadores deben ser más detallados:
+- Ingresos Brutos: Indicar cantidad de viajes reales (informar si hubo créditos/vales).
+- Costo Operativo: Informar el desglose de estos costos (Pagos a Choferes, Tasas ADT, Upcharges).
+- Rendimiento Total: Indicar impacto de créditos.
+Corrección de Errores: El botón "Exportar a PDF" no funciona y debe ser implementado para generar un reporte formal del período seleccionado.

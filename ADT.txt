@@ -1,0 +1,90 @@
+ADT - ADT_CLEAN_2026
+ADT_CONFIRM_DELETE
+
+cd C:\laragon\www\ADT
+.\start-dev.ps1
+
+Aquí tenés el paso a paso exacto para cada situación, usando el poder de Antigravity en modo PLANNING:
+
+Paso 1: Activar el Contexto (Solo si iniciás un chat nuevo)
+Si el chat está vacío, lo primero es decirle quién es y qué debe mirar:
+
+"Iniciando sesión de desarrollo para ADT. Leé @SOP_Analisis_Master.md y @SOP_Arquitectura_Master.md. Confirmame que tenés clara la lógica de [X función] para empezar."
+
+Paso 2: Cómo pedir según el caso (El "Prompt" exacto)
+Usá siempre el modo PLANNING para estos tres casos. La clave es pedirle que actualice el SOP antes que el código.
+
+A. Si querés MEJORAR o AGREGAR una función:
+*"Quiero agregar la función de [Nombre de función].
+
+Revisá los SOPs maestros y proponé los cambios necesarios en el Análisis y en la Arquitectura (DB y Endpoints).
+
+Una vez aprobados, actualizá los archivos .md en /docs.
+
+Luego, desarrollá el código siguiendo el nuevo plano."*
+
+B. Si querés CORREGIR algo que funciona mal:
+*"La función [ID del SOP] está fallando cuando ocurre [X error].
+
+Compará el código actual con lo que dice su SOP en /docs.
+
+Si el error es de lógica, corregí primero el SOP para que la regla quede clara.
+
+Si es solo un error de código, arreglalo y asegurate de que cumpla con la 'Checklist de Calidad' de su SOP."*
+
+C. Si querés REFACCIONAR (Limpiar código viejo):
+*"Revisá el módulo de [Nombre]. Siento que el código se desvió de lo que dice el SOP Maestro de Arquitectura.
+
+Analizá las discrepancias.
+
+Refactorizá el código para que sea 100% fiel a los SOPs actuales."*
+
+Paso 3: El Cierre de Seguridad (Autocorrección)
+Al final de cualquier tarea, siempre pedile esto para garantizar la robustez:
+
+"Realizá la Auto-Auditoría: Verificá que el código nuevo no haya roto ninguna 'Regla de Oro' de las funciones que ya estaban definidas en el SOP Maestro."
+
+Resumen de conceptos clave:
+Mencionar los SOPs: Usá el @ seguido del nombre del archivo si sentís que la IA se está perdiendo, pero si pusiste las "Rules" que te pasé antes, debería leerlos sola.
+
+SOP Primero, Código Después: Esta es tu regla de hierro. Nunca dejes que escriba código si el SOP no está actualizado. Esto evita que la IA "alucine" soluciones creativas pero incompatibles con tu sistema.
+
+No necesitás la Gema: Antigravity es lo suficientemente inteligente para mantener el SOP Maestro si le das la instrucción clara de "actualizar el archivo .md".
+
+
+Aquí tienes el paso a paso de qué pedirle a Antigravity (en modo PLANNING) para cada caso:
+
+Caso 1: Diseño o Responsive
+El riesgo: Que la IA te cambie el CSS y rompa la estética general o use librerías que no querés.
+
+Qué pedir: "Quiero que la interfaz [X] sea responsive. Revisá el SOP de Arquitectura para ver qué framework de diseño estamos usando. No toques el código hasta que confirmes que el cambio no rompe las reglas estéticas del SOP."
+
+Resultado: Antigravity verifica si hay reglas de "Mobile-First" en tus SOPs y aplica el cambio de forma coherente.
+
+Caso 2: Finanzas no refleja bien la información (Error de Lógica)
+El riesgo: Que la IA "parchee" el código pero el error de cálculo siga ahí.
+
+Qué pedir: "La sección de finanzas muestra datos erróneos. 1. Buscá en el SOP de Análisis cómo se supone que se calcula el [Total/Impuesto/etc]. 2. Compará esa lógica con el código actual. 3. Si el SOP está bien pero el código mal, arreglá el código. Si el SOP es el que está incompleto, actualizalo primero."
+
+Resultado: Asegurás que el cálculo matemático quede documentado para siempre y no vuelva a fallar.
+
+Caso 3: Nueva sección (Tabla con Indicadores)
+El riesgo: Que invente nombres de tablas o use indicadores que no existen en la base de datos.
+
+Qué pedir: "Quiero agregar una tabla de indicadores en el módulo [X]. 1. Leé los SOPs maestros. 2. Actualizá el SOP de Arquitectura con los nuevos endpoints y la estructura de la tabla. 3. Actualizá el SOP de Análisis definiendo qué significa cada indicador. 4. Una vez guardados los .md, programá la sección."
+
+Resultado: El sistema crece de forma ordenada. Si mañana otro programador (o vos mismo) quiere ver de dónde salen esos indicadores, están en el SOP.
+
+Caso 4: Error en Consola (Bugs técnicos)
+El riesgo: Que solucione el error pero ignore las reglas de seguridad o de arquitectura del proyecto.
+
+Qué pedir: "Tengo este error en consola: [Pegar error]. 1. Analizá por qué sucede. 2. Antes de arreglarlo, verificá en el SOP de Arquitectura el protocolo de manejo de errores y validaciones. 3. Corregilo asegurando que no viole ninguna 'Regla de Oro' del SOP de Análisis."
+
+Resultado: El error se va, pero la robustez del sistema se mantiene intacta.
+
+Regla de oro para los 4 casos:
+Cuando Antigravity te diga: "Ya está listo", tu respuesta final siempre debe ser:
+
+"¿Actualizaste los archivos .md en /docs para reflejar estos cambios?"
+
+Si dice que no, pedile que lo haga. El SOP desactualizado es el inicio del caos.

@@ -1,0 +1,71 @@
+import { Repository, DataSource } from 'typeorm';
+import { CartaPorte } from '../database/entities/carta-porte.entity';
+import { FinancialLot } from '../database/entities/financial-lot.entity';
+import { PaymentLot } from '../database/entities/payment-lot.entity';
+import { LotDeduction } from '../database/entities/lot-deduction.entity';
+import { AdtCredit } from '../database/entities/adt-credit.entity';
+import { AdtRecaudacion } from '../database/entities/adt-recaudacion.entity';
+import { Tenant } from '../database/entities/tenant.entity';
+import { FinancialReportingService } from './financial-reporting.service';
+import { Client } from '../database/entities/client.entity';
+export declare class Finance360Service {
+    private tripsRepo;
+    private financialLotRepo;
+    private paymentLotRepo;
+    private deductionRepo;
+    private adtCreditRepo;
+    private adtRecaudacionRepo;
+    private tenantRepo;
+    private clientRepo;
+    private reportingService;
+    private dataSource;
+    constructor(tripsRepo: Repository<CartaPorte>, financialLotRepo: Repository<FinancialLot>, paymentLotRepo: Repository<PaymentLot>, deductionRepo: Repository<LotDeduction>, adtCreditRepo: Repository<AdtCredit>, adtRecaudacionRepo: Repository<AdtRecaudacion>, tenantRepo: Repository<Tenant>, clientRepo: Repository<Client>, reportingService: FinancialReportingService, dataSource: DataSource);
+    createFinancialLot(tenantId: string, clientId: string, tripIds: string[]): Promise<FinancialLot>;
+    createPaymentLot(tenantId: string, choferId: string, tripIds: string[], deductions: {
+        monto: number;
+        descripcion: string;
+        tipo: string;
+    }[]): Promise<PaymentLot>;
+    handleTripCancellation(tripId: string): Promise<AdtCredit>;
+    conciliateFinancialLot(lotId: string): Promise<FinancialLot>;
+    calculateUpcharge(clientId: string, currentPrice: number): Promise<number>;
+    getDashboardKPIs(tenantId: string, startDate?: Date, endDate?: Date): Promise<{
+        ingresoBruto: number;
+        costoOperativo: number;
+        costoPlataforma: number;
+        upcharges: number;
+        margenNeto: number;
+        totalViajes: number;
+        newTripsCount: number;
+        creditTripsCount: number;
+        breakdown: {
+            driverPayouts: number;
+            platformFees: number;
+            upcharges: number;
+        };
+        byClient: any;
+        totalProfit: number;
+        startDate: string | undefined;
+        endDate: string | undefined;
+        tripsCount?: undefined;
+        totalAdtFee?: undefined;
+        error?: undefined;
+    } | {
+        ingresoBruto: number;
+        costoOperativo: number;
+        costoPlataforma: number;
+        upcharges: number;
+        margenNeto: number;
+        totalViajes: number;
+        newTripsCount: number;
+        creditTripsCount: number;
+        byClient: {};
+        totalProfit: number;
+        tripsCount: number;
+        totalAdtFee: number;
+        error: any;
+        breakdown?: undefined;
+        startDate?: undefined;
+        endDate?: undefined;
+    }>;
+}

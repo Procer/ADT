@@ -1,0 +1,8 @@
+TENANT: Transporte Oeste Hermanos (8AF3423E-F36B-1410-8A7F-00A64490CC08)
+PRICINGS: [{"precio_cp":4000,"fecha_desde":"2026-03-06T03:09:00.146Z"},{"precio_cp":3000,"fecha_desde":"2026-03-05T18:17:39.100Z"},{"precio_cp":3000,"fecha_desde":"2026-03-05T18:17:30.187Z"}]
+--- MARCH 2026 / ACTIVE TRIPS ---
+CP: ADT-4577 | Fecha: 2026-03-05T19:56:07.260Z | Estado: FINALIZADO | Cred: false | Upch: 0 | Revenue: 60000 | Costo Calc: 60000
+CP: ADT-2053 | Fecha: 2026-03-06T02:39:02.256Z | Estado: EN_CAMINO | Cred: false | Upch: 0 | Revenue: 60000 | Costo Calc: 60000
+CP: ADT-1136 | Fecha: 2026-03-06T02:56:02.266Z | Estado: ANULADO | Cred: false | Upch: 0 | Revenue: 54997 | Costo Calc: 0
+CP: ADT-5241 | Fecha: 2026-03-06T03:09:47.086Z | Estado: ANULADO | Cred: true | Upch: 0 | Revenue: 54997 | Costo Calc: 0
+TOTAL CALCULATED: 120000

@@ -1,0 +1,8 @@
+{
+    "terminal.integrated.env.windows": {
+        "USERPROFILE": "C:\\GeminiConfig\\CuentaDerosasJM",
+        "HOMEDRIVE": "C:",
+        "HOMEPATH": "\\GeminiConfig\\CuentaDerosasJM",
+        "GEMINI_MCP_CONFIG_PATH": "C:\\GeminiConfig\\CuentaDerosasJM\\mcp_pro.json"
+    }
+}

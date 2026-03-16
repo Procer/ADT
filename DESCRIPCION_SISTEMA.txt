@@ -1,0 +1,100 @@
+==============================================================================
+DOCUMENTACIÓN FUNCIONAL Y TÉCNICA DEL SISTEMA ADT (Advanced Delivery Tracking)
+==============================================================================
+
+1. VISIÓN GENERAL
+-----------------
+El sistema ADT es una plataforma SaaS (Software as a Service) diseñada para la gestión logística, trazabilidad de envíos y control financiero de empresas de transporte. Permite a una empresa "Dueña" (ADT) revender el servicio a múltiples empresas logísticas (Tenants), quienes a su vez gestionan sus propios clientes (Dadores de Carga) y flotas.
+
+2. ACTORES Y ROLES
+------------------
+A. SUPER ADMIN (ADT):
+   - Dueño del sistema.
+   - Crea y gestiona Empresas Logísticas (Tenants).
+   - Define el precio base por viaje y la configuración global (moneda, frecuencia GPS).
+   - Tiene acceso a auditoría global y limpieza de datos ("Hard Reset").
+
+B. TENANT ADMIN (Empresa Logística):
+   - Cliente del SaaS.
+   - Gestiona su propia flota: Unidades (Camiones) y Choferes.
+   - Gestiona su cartera de Dadores de Carga (Clientes Finales).
+   - Visualiza monitoreo en tiempo real, alertas y finanzas de su operación.
+
+C. CLIENTE FINAL (Dador de Carga):
+   - Solicita viajes (Cartas de Porte).
+   - Puede ver el estado de sus envíos en tiempo real (Tracking).
+   - Opera con un sistema de créditos/vales pre-asignados o cuenta corriente.
+
+D. CHOFER (Driver):
+   - Utiliza la PWA (Progressive Web App) en su móvil.
+   - Recibe asignaciones de viajes.
+   - Reporta estados (En Camino, Llegué, Carga/Descarga).
+   - Su dispositivo actúa como baliza GPS.
+
+3. MÓDULOS Y FUNCIONALIDADES
+----------------------------
+
+3.1. GESTIÓN DE VIAJES (CARTAS DE PORTE)
+   - Ciclo de Vida: SOLICITADO -> PENDING -> EN_CAMINO -> LLEGUE -> CARGA_DESCARGA -> FINALIZADO.
+   - Métodos de Creación:
+     a. Manual: Desde el dashboard.
+     b. Carga Masiva (Excel): Genera IDs con formato "CP-MAS-XXXX".
+     c. API: Integración directa.
+   - Asignación: Manual o automática a choferes disponibles.
+
+3.2. MONITOREO Y TELEMETRÍA (GPS)
+   - Tracking en Tiempo Real: Visualización de unidades en mapa interactivo.
+   - Geocercas (Geofencing):
+     - Radio configurable por Tenant (ej. 500m, 2000m).
+     - Validación automática de arribos.
+     - Alerta de "Geocerca Violada" si el chofer marca "Llegué" fuera del radio permitido.
+   - Control de Velocidad: Alertas automáticas si se supera el umbral configurado.
+
+3.3. FINANZAS Y FACTURACIÓN
+   - Modelo de Precios:
+     - El precio por viaje lo define ADT en el contrato del Tenant.
+     - Los Dadores de Carga heredan este precio (no es editable por nivel).
+   - Sistema de Créditos:
+     - Los Dadores pueden tener saldo a favor (Vales).
+     - El sistema descuenta créditos automáticamente al confirmar viajes.
+   - Liquidación:
+     - Reportes mensuales de deuda.
+     - Registro de Pagos parciales o totales.
+     - Auditoría de pagos eliminados (reversión de deuda automática).
+
+3.4. CENTRO DE ALERTAS (INCIDENCIAS)
+   - Feed de incidencias con niveles de severidad:
+     - CRÍTICA (Rojo): Excesos de velocidad.
+     - IMPORTANTE (Naranja): Violación de geocerca (fraude potencial).
+     - INFO (Azul): Eventos operativos.
+   - Resolución:
+     - Permite a los operadores "Resolver" alertas con un comentario obligatorio.
+     - Diferencia entre alertas vivas y el historial de resueltas.
+
+3.5. APLICACIÓN DE CONDUCTORES (PWA)
+   - Funciona Offline (cola de sincronización).
+   - Botón de Pánico / Acciones rápidas grandes para uso en tránsito.
+   - Wake Lock: Mantiene la pantalla encendida para tracking continuo.
+   - Evidencia: Subida de fotos (remitos) al finalizar el viaje.
+
+4. REGLAS DE NEGOCIO CRÍTICAS
+-----------------------------
+1. INMUTABILIDAD DE PRECIOS: Un Cliente Logístico NO puede cambiar el precio de un viaje individualmente para un Dador. El precio es una política global del contrato SaaS.
+2. SEGURIDAD DE DATOS: Las acciones destructivas (borrar cliente, limpiar historial) requieren códigos de confirmación ("ADT_CONFIRM_DELETE").
+3. AUDITORÍA TOTAL: Cada cambio de estado, pago registrado o alerta resuelta genera un log inmutable en `audit_logs`.
+4. HERENCIA DE CONFIGURACIÓN: Al crear un Dador de Carga, este hereda automáticamente la moneda y configuración base de su Tenant padre.
+
+5. CARACTERÍSTICAS TÉCNICAS
+---------------------------
+- Backend: NestJS con TypeORM (MSSQL).
+- Frontend: React + Vite (Estilo Glassmorphism).
+- Comunicación: REST API + WebSockets (para tracking en vivo - planificado).
+- Infraestructura: Soporte para despliegue en contenedores (Docker).
+- Base de Datos: Tipos de datos estrictos (Decimal para coordenadas, NVARCHAR para textos unicode).
+
+6. ESTADO ACTUAL (Últimos Cambios)
+----------------------------------
+- Corrección de rutas REST (PATCH para actualizaciones).
+- Unificación de gestión de Dadores de Carga (Eliminación de precios manuales).
+- Rediseño visual del Centro de Monitoreo (Feed de tarjetas).
+- Soporte para resolución de alertas basadas en auditoría (no solo GPS).

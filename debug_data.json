@@ -1,0 +1,90 @@
+{
+  "wallets": [
+    {
+      "id": "8CF3423E-F36B-1410-8A7F-00A64490CC08",
+      "tenant_id": "8AF3423E-F36B-1410-8A7F-00A64490CC08",
+      "client_id": null,
+      "saldo_creditos": 0,
+      "last_update": "2026-03-05T18:17:30.380Z"
+    },
+    {
+      "id": "9FF3423E-F36B-1410-8A7F-00A64490CC08",
+      "tenant_id": "8AF3423E-F36B-1410-8A7F-00A64490CC08",
+      "client_id": "93F3423E-F36B-1410-8A7F-00A64490CC08",
+      "saldo_creditos": 0,
+      "last_update": "2026-03-05T19:56:07.143Z"
+    },
+    {
+      "id": "6A72433E-F36B-1410-8A80-00A64490CC08",
+      "tenant_id": "8AF3423E-F36B-1410-8A7F-00A64490CC08",
+      "client_id": "6372433E-F36B-1410-8A80-00A64490CC08",
+      "saldo_creditos": 1,
+      "last_update": "2026-03-06T13:34:40.113Z"
+    }
+  ],
+  "trips": [
+    {
+      "id": "7E72433E-F36B-1410-8A80-00A64490CC08",
+      "numero_cp": "ADT-5241",
+      "estado": "ANULADO",
+      "es_credito": true,
+      "monto_upcharge": 0,
+      "ts_creacion": "2026-03-06T03:09:47.086Z",
+      "client_id": "6372433E-F36B-1410-8A80-00A64490CC08",
+      "revenue_at_execution": 54997
+    },
+    {
+      "id": "6C72433E-F36B-1410-8A80-00A64490CC08",
+      "numero_cp": "ADT-1136",
+      "estado": "ANULADO",
+      "es_credito": false,
+      "monto_upcharge": 0,
+      "ts_creacion": "2026-03-06T02:56:02.266Z",
+      "client_id": "6372433E-F36B-1410-8A80-00A64490CC08",
+      "revenue_at_execution": 54997
+    },
+    {
+      "id": "5C72433E-F36B-1410-8A80-00A64490CC08",
+      "numero_cp": "ADT-2053",
+      "estado": "EN_CAMINO",
+      "es_credito": false,
+      "monto_upcharge": 0,
+      "ts_creacion": "2026-03-06T02:39:02.256Z",
+      "client_id": "93F3423E-F36B-1410-8A7F-00A64490CC08",
+      "revenue_at_execution": 60000
+    },
+    {
+      "id": "A1F3423E-F36B-1410-8A7F-00A64490CC08",
+      "numero_cp": "ADT-4577",
+      "estado": "FINALIZADO",
+      "es_credito": false,
+      "monto_upcharge": 0,
+      "ts_creacion": "2026-03-05T19:56:07.260Z",
+      "client_id": "93F3423E-F36B-1410-8A7F-00A64490CC08",
+      "revenue_at_execution": 60000
+    }
+  ],
+  "pricing": [
+    {
+      "id": 7002,
+      "tenant_id": "8AF3423E-F36B-1410-8A7F-00A64490CC08",
+      "precio_cp": 4000,
+      "moneda": "ARS",
+      "fecha_desde": "2026-03-06T03:09:00.146Z"
+    },
+    {
+      "id": 6003,
+      "tenant_id": "8AF3423E-F36B-1410-8A7F-00A64490CC08",
+      "precio_cp": 3000,
+      "moneda": "ARS",
+      "fecha_desde": "2026-03-05T18:17:39.100Z"
+    },
+    {
+      "id": 6002,
+      "tenant_id": "8AF3423E-F36B-1410-8A7F-00A64490CC08",
+      "precio_cp": 3000,
+      "moneda": "ARS",
+      "fecha_desde": "2026-03-05T18:17:30.187Z"
+    }
+  ]
+}

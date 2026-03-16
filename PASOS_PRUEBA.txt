@@ -1,0 +1,78 @@
+# GUÍA DE INICIALIZACIÓN Y PRUEBAS - SISTEMA ADT
+
+Sigue estos pasos en orden para poner en marcha el entorno de desarrollo y pruebas.
+
+## 1. INFRAESTRUCTURA (Base de Datos y Cache)
+Es necesario tener Docker Desktop funcionando.
+- Abre una terminal en la raíz del proyecto: `C:\laragon\www\ADT`
+- Ejecuta el siguiente comando para levantar MSSQL, Redis:
+  ```bash
+  docker-compose up -d
+  ```
+
+## 2. BACKEND (Servidor NestJS)
+- Abre una nueva terminal en la raíz del proyecto.
+- Instala las dependencias (si es la primera vez):
+  ```bash
+  npm install
+  ```
+- Inicia el servidor en modo desarrollo:
+  ```bash
+  npm run start:dev
+  ```
+- El servidor estará disponible en `http://127.0.0.1:3001`.
+
+## 3. INTERFACES DE USUARIO (Vite + React)
+
+### A. PWA (Interfaz del Chofer)
+- Abre una terminal en la carpeta pwa: `C:\laragon\www\ADT\pwa`
+- Instala las dependencias:
+  ```bash
+  npm install
+  ```
+- Inicia la aplicación:
+  ```bash
+  npm run dev
+  ```
+- URL: `http://127.0.0.1:5173`
+- Credenciales de prueba: PIN `1234`
+
+### B. DASHBOARD (Panel de Administración)
+- Abre una terminal en la carpeta dashboard: `C:\laragon\www\ADT\dashboard`
+- Instala las dependencias:
+  ```bash
+  npm install
+  ```
+- Inicia la aplicación:
+  ```bash
+  npm run dev
+  ```
+- URL: `http://127.0.0.1:5174`
+
+## 4. CARGA DE DATOS INICIALES (Seed)
+Si es la primera vez que inicias el sistema, la base de datos estará vacía. 
+Para crear un entorno de prueba funcional:
+1. Conéctate a MSSQL (puerto 1499) usando Azure Data Studio o similar.
+2. Conéctate con:
+   - Sistema: Microsoft SQL Server
+   - Servidor: 127.0.0.1,1499
+   - Usuario: sa
+   - Contraseña: YourStrongPassword123
+   - Base de datos: adt_db
+3. Ejecuta el siguiente SQL para crear los registros básicos:
+
+```sql
+INSERT INTO tenants (id, nombre_empresa) 
+VALUES ('00000000-0000-0000-0000-000000000000', 'Empresa Test ADT');
+
+INSERT INTO drivers (id, tenant_id, nombre, pin) 
+VALUES ('00000000-0000-0000-0000-111111111111', '00000000-0000-0000-0000-000000000000', 'Juan Pérez', '1234');
+
+INSERT INTO transport_units (id, tenant_id, patente) 
+VALUES ('00000000-0000-0000-0000-222222222222', '00000000-0000-0000-0000-000000000000', 'AF 123 BK');
+```
+
+## 5. VERIFICACIÓN DE FUNCIONAMIENTO
+- Backend: Verifica que no haya errores de conexión a la BD en la consola.
+- PWA: Intenta loguearte con el PIN `1234`.
+- Dashboard: Verifica que se visualicen las unidades o choferes creados.

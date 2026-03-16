@@ -1,0 +1,35 @@
+import { TenantPricing } from './tenant-pricing.entity';
+import { TransportUnit } from './transport-unit.entity';
+import { Driver } from './driver.entity';
+import { CartaPorte } from './carta-porte.entity';
+import { TravelCredit } from './travel-credit.entity';
+import { Salesperson } from './salesperson.entity';
+export declare class Tenant {
+    id: string;
+    nombreEmpresa: string;
+    config: any;
+    logoUrl: string;
+    telegramChatId: string;
+    imapHost: string;
+    imapPort: number;
+    imapUser: string;
+    imapPass: string;
+    geminiApiKey: string;
+    smtpHost: string;
+    smtpPort: number;
+    smtpUser: string;
+    smtpPass: string;
+    smtpFrom: string;
+    smtpSecure: boolean;
+    limiteCreditoGlobal: number;
+    deudaActual: number;
+    activo: boolean;
+    createdAt: Date;
+    salespersonId: string;
+    salesperson: Salesperson;
+    pricings: TenantPricing[];
+    units: TransportUnit[];
+    drivers: Driver[];
+    trips: CartaPorte[];
+    credits: TravelCredit[];
+}
