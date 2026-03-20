@@ -779,7 +779,7 @@ export class ManagementController {
                 <p>Por seguridad, se le solicitará cambiar la contraseña al ingresar.</p>
             </div>
         `;
-        const sent = await this.notificationsService.sendEmail(user.email, 'Sus Credenciales ADT', html, tenant || undefined);
+        const sent = await this.notificationsService.sendEmail(user.email, 'Sus Credenciales ADT', html);
         if (!sent) {
             throw new BadRequestException('Error al enviar el email. Verifique la configuración SMTP.');
         }
