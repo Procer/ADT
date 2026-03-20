@@ -35,12 +35,16 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
+const typeorm_1 = require("typeorm");
+const all_exceptions_filter_1 = require("./common/all-exceptions.filter");
 const express = __importStar(require("express"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 process.env.TZ = 'UTC';
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const dataSource = app.get(typeorm_1.DataSource);
+    app.useGlobalFilters(new all_exceptions_filter_1.AllExceptionsFilter(dataSource));
     app.enableCors({
         origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

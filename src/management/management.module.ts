@@ -32,6 +32,7 @@ import { PaymentLot } from '../database/entities/payment-lot.entity';
 import { LotDeduction } from '../database/entities/lot-deduction.entity';
 import { AdtCredit } from '../database/entities/adt-credit.entity';
 import { AdtRecaudacion } from '../database/entities/adt-recaudacion.entity';
+import { AppLog } from '../database/entities/app-log.entity';
 import { FinanceController } from './finance.controller';
 import { Finance360Service } from './finance-360.service';
 import { NotificationsService } from './notifications.service';
@@ -60,7 +61,8 @@ import { NotificationsService } from './notifications.service';
             PaymentLot,
             LotDeduction,
             AdtCredit,
-            AdtRecaudacion
+            AdtRecaudacion,
+            AppLog
         ]),
         forwardRef(() => TripsModule)
     ],

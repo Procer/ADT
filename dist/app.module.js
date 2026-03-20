@@ -77,6 +77,7 @@ const payment_lot_entity_1 = require("./database/entities/payment-lot.entity");
 const lot_deduction_entity_1 = require("./database/entities/lot-deduction.entity");
 const adt_credit_entity_1 = require("./database/entities/adt-credit.entity");
 const adt_recaudacion_entity_1 = require("./database/entities/adt-recaudacion.entity");
+const app_log_entity_1 = require("./database/entities/app-log.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -113,7 +114,8 @@ exports.AppModule = AppModule = __decorate([
                     payment_lot_entity_1.PaymentLot,
                     lot_deduction_entity_1.LotDeduction,
                     adt_credit_entity_1.AdtCredit,
-                    adt_recaudacion_entity_1.AdtRecaudacion
+                    adt_recaudacion_entity_1.AdtRecaudacion,
+                    app_log_entity_1.AppLog
                 ],
                 synchronize: false,
                 logging: true,

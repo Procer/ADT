@@ -78,6 +78,7 @@ const adt_recaudacion_entity_1 = require("../database/entities/adt-recaudacion.e
 const notifications_service_1 = require("./notifications.service");
 const system_config_entity_1 = require("../database/entities/system-config.entity");
 const email_ingestion_log_entity_1 = require("../database/entities/email-ingestion-log.entity");
+const app_log_entity_1 = require("../database/entities/app-log.entity");
 const public_decorator_1 = require("../auth/public.decorator");
 const bcrypt = __importStar(require("bcrypt"));
 let ManagementController = class ManagementController {
@@ -135,6 +136,27 @@ let ManagementController = class ManagementController {
     }
     async findAllTrips(tenantId, estado, choferId, clientId) {
         return this.tripsService.findAll(tenantId, { estado, choferId, clientId });
+    }
+    async publicContact(body) {
+        const { nombre, email, mensaje } = body;
+        const html = `
+            <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #6366f1;">Nueva Consulta desde la Web ANKA</h2>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Remitente:</strong> ${nombre}</p>
+                    <p><strong>Email de contacto:</strong> <a href="mailto:${email}">${email}</a></p>
+                    <p><strong>Mensaje:</strong></p>
+                    <p style="white-space: pre-wrap; font-style: italic;">${mensaje}</p>
+                </div>
+                <p style="font-size: 0.8em; color: #999;">Enviado automáticamente desde el sitio oficial anka.ar</p>
+            </div>
+        `;
+        const sent1 = await this.notificationsService.sendEmail('sistema.anka@gmail.com', `Nueva Consulta Web: ${nombre}`, html);
+        const sent2 = await this.notificationsService.sendEmail('derosasjm@gmail.com', `Nueva Consulta Web: ${nombre}`, html);
+        if (!sent1 && !sent2) {
+            throw new common_1.BadRequestException('El servidor no pudo procesar el envío. Verifique la configuración SMTP en el sistema.');
+        }
+        return { success: true, message: 'Consulta enviada correctamente.' };
     }
     async getSystemConfig() {
         let config = await this.systemConfigRepo.findOne({ where: { configKey: 'GLOBAL_SETTINGS' } });
@@ -644,6 +666,41 @@ let ManagementController = class ManagementController {
         }
         return { success: true, message: `Credenciales re-enviadas a ${user.email}` };
     }
+    async sendClientCredentials(id) {
+        const client = await this.clientRepo.findOne({ where: { id } });
+        if (!client)
+            throw new common_1.NotFoundException('Dador de carga no encontrado');
+        const user = await this.userRepo.findOne({
+            where: { clientId: id, role: user_entity_1.UserRole.CLIENT }
+        });
+        if (!user) {
+            throw new common_1.BadRequestException('Este dador no tiene un usuario de acceso creado. Por favor, créelo desde el botón Acceso.');
+        }
+        const passwordHash = await bcrypt.hash('ADT-321', 10);
+        user.passwordHash = passwordHash;
+        user.mustChangePassword = true;
+        await this.userRepo.save(user);
+        const recipientEmail = client.email || user.email;
+        const tenant = await this.tenantRepo.findOne({ where: { id: client.tenantId } });
+        const html = `
+            <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #6366f1;">Sus Credenciales de Acceso - ANKA</h2>
+                <p>Se han generado los datos para que ingrese al portal de seguimiento operativo de <strong>${client.nombreRazonSocial}</strong>.</p>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Usuario / Email:</strong> ${user.email}</p>
+                    <p><strong>Contraseña Temporal:</strong> ADT-321</p>
+                </div>
+                <p>Puede ingresar aquí:</p>
+                <a href="${process.env.FRONTEND_URL || 'https://sistema.anka.ar'}" style="display: inline-block; padding: 10px 20px; background: #6366f1; color: white; text-decoration: none; border-radius: 5px;">Ir al Portal Operativo</a>
+                <p style="margin-top: 20px; font-size: 0.8em; color: #666;">Por seguridad, cambie la contraseña al ingresar por primera vez.</p>
+            </div>
+        `;
+        const sent = await this.notificationsService.sendEmail(recipientEmail, 'Accesos al Portal ANKA Logística', html, tenant || undefined);
+        if (!sent) {
+            throw new common_1.BadRequestException('Error al enviar el email. Si usa Gmail, verifique que use "Contraseña de Aplicación". Más detalles en Errores de Apps.');
+        }
+        return { success: true, message: `Credenciales enviadas a ${recipientEmail} con éxito.` };
+    }
     async getAuthorizedEmails(clientId) {
         return this.dataSource.getRepository(client_authorized_email_entity_1.ClientAuthorizedEmail).find({
             where: { clientId }
@@ -735,7 +792,7 @@ let ManagementController = class ManagementController {
         `;
         const sent = await this.notificationsService.sendEmail(user.email, 'Accesos ADT - ' + (tenant?.nombreEmpresa || ''), html, tenant || undefined);
         if (!sent) {
-            throw new common_1.BadRequestException('El sistema no pudo enviar el email. Verifique la configuración SMTP Global o de la Empresa.');
+            throw new common_1.BadRequestException('El sistema no pudo enviar el email. Si usa Gmail, verifique que esté usando una "Contraseña de Aplicación". Más info en Errores de Apps.');
         }
         return { success: true, message: `Credenciales enviadas a ${user.email} con éxito.` };
     }
@@ -879,6 +936,12 @@ let ManagementController = class ManagementController {
         };
         return await this.aiExtractorService.processFinanceCopilot(userInput, context, tenant.geminiApiKey);
     }
+    async getPwaLogs() {
+        return this.dataSource.getRepository(app_log_entity_1.AppLog).find({
+            order: { timestamp: 'DESC' },
+            take: 100
+        });
+    }
 };
 exports.ManagementController = ManagementController;
 __decorate([
@@ -892,6 +955,14 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], ManagementController.prototype, "findAllTrips", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Post)('public/web-contact'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "publicContact", null);
 __decorate([
     (0, public_decorator_1.Public)(),
     (0, common_1.Get)('system-config'),
@@ -1120,6 +1191,14 @@ __decorate([
 ], ManagementController.prototype, "resendCredentials", null);
 __decorate([
     (0, public_decorator_1.Public)(),
+    (0, common_1.Post)('clients/:id/send-credentials'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "sendClientCredentials", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Get)('authorized-emails'),
     __param(0, (0, common_1.Query)('clientId')),
     __metadata("design:type", Function),
@@ -1263,6 +1342,12 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ManagementController.prototype, "processAiCopilot", null);
+__decorate([
+    (0, common_1.Get)('pwa-logs'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "getPwaLogs", null);
 exports.ManagementController = ManagementController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('management'),

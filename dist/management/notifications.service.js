@@ -54,15 +54,18 @@ const audit_log_entity_1 = require("../database/entities/audit-log.entity");
 const update_trip_status_dto_1 = require("../trips/dto/update-trip-status.dto");
 const telegram_service_1 = require("./telegram.service");
 const system_config_entity_1 = require("../database/entities/system-config.entity");
+const app_log_entity_1 = require("../database/entities/app-log.entity");
 const nodemailer = __importStar(require("nodemailer"));
 let NotificationsService = NotificationsService_1 = class NotificationsService {
     auditRepo;
     systemConfigRepo;
+    logRepo;
     telegramService;
     logger = new common_1.Logger(NotificationsService_1.name);
-    constructor(auditRepo, systemConfigRepo, telegramService) {
+    constructor(auditRepo, systemConfigRepo, logRepo, telegramService) {
         this.auditRepo = auditRepo;
         this.systemConfigRepo = systemConfigRepo;
+        this.logRepo = logRepo;
         this.telegramService = telegramService;
     }
     async getTransporter(tenant) {
@@ -118,7 +121,16 @@ let NotificationsService = NotificationsService_1 = class NotificationsService {
             return true;
         }
         catch (error) {
-            this.logger.error(`Error sending email: ${error.message}`);
+            this.logger.error(`[SMTP ERROR] to ${to}: ${error.message} - Check your credentials or Gmail App Password.`);
+            const appLog = this.logRepo.create({
+                contexto: 'SMTP_SERVICE',
+                level: app_log_entity_1.LogLevel.CRITICAL,
+                mensaje: `Fallo de envío a ${to}: ${error.message}`,
+                metadata: JSON.stringify({ subject, tenantId: tenant?.id || 'GLOBAL', stack: error.stack }),
+                tenantId: tenant?.id || null,
+                userId: null
+            });
+            await this.logRepo.save(appLog);
             return false;
         }
     }
@@ -169,7 +181,9 @@ exports.NotificationsService = NotificationsService = NotificationsService_1 = _
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(audit_log_entity_1.AuditLog)),
     __param(1, (0, typeorm_1.InjectRepository)(system_config_entity_1.SystemConfig)),
+    __param(2, (0, typeorm_1.InjectRepository)(app_log_entity_1.AppLog)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         telegram_service_1.TelegramService])
 ], NotificationsService);

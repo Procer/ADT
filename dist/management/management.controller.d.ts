@@ -26,6 +26,7 @@ import { AdtRecaudacion } from '../database/entities/adt-recaudacion.entity';
 import { NotificationsService } from './notifications.service';
 import { SystemConfig } from '../database/entities/system-config.entity';
 import { EmailIngestionLog } from '../database/entities/email-ingestion-log.entity';
+import { AppLog } from '../database/entities/app-log.entity';
 export declare class ManagementController {
     private tripsRepo;
     private gpsRepo;
@@ -54,6 +55,14 @@ export declare class ManagementController {
     private dataSource;
     constructor(tripsRepo: Repository<CartaPorte>, gpsRepo: Repository<GpsTracking>, auditRepo: Repository<AuditLog>, unitRepo: Repository<TransportUnit>, driverRepo: Repository<Driver>, tenantRepo: Repository<Tenant>, pricingRepo: Repository<TenantPricing>, creditsRepo: Repository<TravelCredit>, clientRepo: Repository<Client>, userRepo: Repository<User>, paymentRepo: Repository<TenantPayment>, walletRepo: Repository<WalletBalance>, systemConfigRepo: Repository<SystemConfig>, batchRepo: Repository<SettlementBatch>, paymentLotRepo: Repository<PaymentLot>, adtCreditRepo: Repository<AdtCredit>, adtRecaudacionRepo: Repository<AdtRecaudacion>, tripsService: TripsService, pricingEngine: PricingEngineService, reportingService: FinancialReportingService, aiExtractorService: AiExtractorService, notificationsService: NotificationsService, telegramService: TelegramService, emailIngestionService: EmailIngestionService, dataSource: DataSource);
     findAllTrips(tenantId: string, estado?: string, choferId?: string, clientId?: string): Promise<CartaPorte[]>;
+    publicContact(body: {
+        nombre: string;
+        email: string;
+        mensaje: string;
+    }): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     getSystemConfig(): Promise<SystemConfig>;
     updateSystemConfig(body: any): Promise<SystemConfig>;
     getTenants(): Promise<{
@@ -212,6 +221,10 @@ export declare class ManagementController {
         success: boolean;
         message: string;
     }>;
+    sendClientCredentials(id: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     getAuthorizedEmails(clientId: string): Promise<ClientAuthorizedEmail[]>;
     addAuthorizedEmail(body: any): Promise<ClientAuthorizedEmail>;
     deleteAuthorizedEmail(id: string): Promise<{
@@ -258,4 +271,5 @@ export declare class ManagementController {
         userInput: string;
         tenantId: string;
     }, req: any): Promise<any>;
+    getPwaLogs(): Promise<AppLog[]>;
 }
