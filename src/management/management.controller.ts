@@ -1160,10 +1160,25 @@ export class ManagementController {
 
     @Get('pwa-logs')
     async getPwaLogs() {
-        // Obtenemos los últimos 100 logs del sistema (incluyendo errores SMTP)
         return this.dataSource.getRepository(AppLog).find({
             order: { timestamp: 'DESC' },
             take: 100
         });
+    }
+
+    @Get('audits')
+    async getAudits(@Query('tenantId') tenantId: string) {
+        if (!tenantId) throw new BadRequestException('tenantId is required');
+        return this.auditRepo.find({
+            where: { tenantId },
+            order: { fecha: 'DESC' },
+            take: 100
+        });
+    }
+
+    @Get('logs')
+    async getSystemLogs() {
+        // Alias para pwa-logs si el frontend lo pide como logs
+        return this.getPwaLogs();
     }
 }
