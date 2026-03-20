@@ -6,6 +6,7 @@ import { TripStatus } from '../trips/dto/update-trip-status.dto';
 import { TelegramService } from './telegram.service';
 import { SystemConfig } from '../database/entities/system-config.entity';
 import { Tenant } from '../database/entities/tenant.entity';
+import { AppLog, LogLevel } from '../database/entities/app-log.entity';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
@@ -17,6 +18,8 @@ export class NotificationsService {
         private readonly auditRepo: Repository<AuditLog>,
         @InjectRepository(SystemConfig)
         private readonly systemConfigRepo: Repository<SystemConfig>,
+        @InjectRepository(AppLog)
+        private readonly logRepo: Repository<AppLog>,
         private readonly telegramService: TelegramService,
     ) { }
 
@@ -77,7 +80,17 @@ export class NotificationsService {
             this.logger.log(`[EMAIL SENT] to ${to}: ${subject}`);
             return true;
         } catch (error) {
-            this.logger.error(`Error sending email: ${error.message}`);
+            this.logger.error(`[SMTP ERROR] to ${to}: ${error.message} - Check your credentials or Gmail App Password.`);
+
+            // Persistir Error en Base de Datos para el Super Admin
+            await this.logRepo.save({
+                contexto: 'SMTP_SERVICE',
+                level: LogLevel.CRITICAL,
+                mensaje: `Fallo de envío a ${to}: ${error.message}`,
+                metadata: JSON.stringify({ subject, tenantId: tenant?.id || 'GLOBAL', stack: error.stack }),
+                tenantId: tenant?.id || null
+            });
+
             return false;
         }
     }

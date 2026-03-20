@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTripStore, type TripStatus } from '../store/useTripStore';
 import { useSyncQueue } from '../hooks/useSyncQueue';
-import { 
-    Play, CheckCircle, Truck, Camera, LogOut, User, 
-    MapPin, Navigation, Info, ArrowRight, ShieldCheck, 
+import {
+    Play, CheckCircle, Truck, Camera, LogOut, User,
+    MapPin, Navigation, Info, ArrowRight, ShieldCheck,
     Zap, Clock, ChevronRight, Activity, Home, List, Map as MapIcon, Lock, Send
 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
@@ -29,15 +29,15 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 const calculateETA = (distanceMeters: number | null, speedMs: number | null) => {
     if (distanceMeters === null) return 'Calculando...';
     if (distanceMeters < 100) return 'Llegó';
-    
+
     // Velocidad promedio logística: 45km/h = 12.5 m/s
     const speed = (speedMs && speedMs > 2) ? speedMs : 12.5;
     const seconds = distanceMeters / speed;
-    
+
     if (seconds < 60) return 'Inminente';
     const minutes = Math.round(seconds / 60);
     if (minutes < 60) return `${minutes} min`;
-    
+
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return `${h}h ${m}m`;
@@ -45,9 +45,9 @@ const calculateETA = (distanceMeters: number | null, speedMs: number | null) => 
 
 export const DriverApp: React.FC = () => {
     useSyncQueue();
-    const { 
-        status, 
-        tripId, 
+    const {
+        status,
+        tripId,
         destination,
         nextTrip,
         startTime,
@@ -55,10 +55,10 @@ export const DriverApp: React.FC = () => {
         entryTime,
         endTime,
         tenantConfig,
-        setTrip, 
+        setTrip,
         setNextTrip,
-        updateStatus, 
-        addToSyncQueue, 
+        updateStatus,
+        addToSyncQueue,
         clearTrip,
         token,
         user,
@@ -153,13 +153,13 @@ export const DriverApp: React.FC = () => {
                 const activeRes = await axios.get(`${API_BASE_URL}/trips/active/driver`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (activeRes.data) {
                     const t = activeRes.data;
                     if (status === 'IDLE' || t.id !== tripId) {
-                        setTrip(t.id, { 
-                            lat: t.destinoLat || 0, 
-                            lng: t.destinoLng || 0, 
+                        setTrip(t.id, {
+                            lat: t.destinoLat || 0,
+                            lng: t.destinoLng || 0,
                             name: t.destinoNombre || 'Destino',
                             numeroCP: t.numeroCP,
                             clienteNombre: t.client?.nombreRazonSocial || 'Dador de Carga'
@@ -177,7 +177,7 @@ export const DriverApp: React.FC = () => {
                 const queueRes = await axios.get(`${API_BASE_URL}/trips/queue`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (queueRes.data && queueRes.data.length > 0) {
                     const upcoming = queueRes.data.find((q: any) => q.id !== tripId);
                     if (upcoming) {
@@ -211,7 +211,7 @@ export const DriverApp: React.FC = () => {
                         const { latitude, longitude, speed } = pos.coords;
                         setLocation(pos.coords);
                         setGpsError(null);
-                        
+
                         let currentDist = 0;
                         if (destination) {
                             currentDist = calculateDistance(latitude, longitude, destination.lat, destination.lng);
@@ -262,17 +262,17 @@ export const DriverApp: React.FC = () => {
         triggerHaptic('heavy');
         setLoadingTrip(true);
         logToBackend('INFO', `Acción Chofer: ${nextStatus}`, { tripId });
-        
+
         let coords = location ? { lat: location.latitude, lng: location.longitude } : null;
-        
+
         // Si no hay coordenadas, intentamos forzar una lectura actual
         if (!coords) {
             try {
                 showToast('Obteniendo ubicación precisa...', 'info');
                 const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, { 
-                        enableHighAccuracy: true, 
-                        timeout: 10000 
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000
                     });
                 });
                 coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -309,13 +309,13 @@ export const DriverApp: React.FC = () => {
         try {
             triggerHaptic('heavy');
             const compressed = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1280, useWebWorker: true });
-            
+
             // Marca de agua en nombre de archivo (Metadatos visuales)
             const watermark = `CP-${destination?.numeroCP}_LAT-${location?.latitude.toFixed(4)}_LNG-${location?.longitude.toFixed(4)}_TIME-${new Date().toISOString()}`;
-            
-            addToSyncQueue({ 
-                type: 'PHOTO_UPLOAD', 
-                timestamp_dispositivo: Date.now(), 
+
+            addToSyncQueue({
+                type: 'PHOTO_UPLOAD',
+                timestamp_dispositivo: Date.now(),
                 fileName: `${watermark}_${file.name}`,
                 tipo_registro: 'MANUAL',
                 evento_manual: 'FINALIZAR'
@@ -336,7 +336,7 @@ export const DriverApp: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#F8F9FC] text-[#1e1b4b] flex flex-col font-sans relative overflow-hidden transition-all duration-500 pb-24">
-            
+
             {/* Header: Clean & Modern */}
             <header className="sticky top-0 z-50 w-full flex items-center justify-between py-4 px-6 bg-white/80 backdrop-blur-md border-b border-indigo-100 shadow-sm">
                 <div className="flex items-center gap-3">
@@ -348,9 +348,9 @@ export const DriverApp: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <div className={`w-2 h-2 rounded-full ${navigator.onLine ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-rose-500'}`} />
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{navigator.onLine ? 'Online' : 'Offline'}</p>
-                            
+
                             <div className="w-px h-3 bg-slate-200 mx-1" />
-                            
+
                             <div className={`w-2 h-2 rounded-full ${location ? 'bg-indigo-500 animate-pulse' : 'bg-slate-300'}`} />
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                                 {gpsError ? gpsError : (location ? 'GPS OK' : 'GPS Buscando')}
@@ -365,18 +365,17 @@ export const DriverApp: React.FC = () => {
 
             {/* Toasts */}
             {toast && (
-                <div className={`fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-10 duration-300 border ${
-                    toast.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-100' : 
-                    toast.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 
-                    'bg-indigo-50 text-indigo-700 border-indigo-100'
-                }`}>
+                <div className={`fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-10 duration-300 border ${toast.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-100' :
+                        toast.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                            'bg-indigo-50 text-indigo-700 border-indigo-100'
+                    }`}>
                     <Activity size={18} className={toast.type === 'error' ? 'text-rose-500' : 'text-indigo-500'} />
                     <p className="text-sm font-black uppercase tracking-tight">{toast.message}</p>
                 </div>
             )}
 
             <main className="flex-1 w-full flex flex-col p-5 gap-6 max-w-lg mx-auto overflow-y-auto">
-                
+
                 {activeTab === 'telegram' ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-6 animate-in fade-in duration-500">
                         <div className="w-24 h-24 bg-[#0088cc]/10 rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-[#0088cc]/20 border border-[#0088cc]/20">
@@ -386,11 +385,11 @@ export const DriverApp: React.FC = () => {
                         <p className="text-slate-500 text-sm font-medium leading-relaxed mb-8">
                             Vincule su cuenta para recibir notificaciones de viajes, alertas y resúmenes directamente en su celular.
                         </p>
-                        
+
                         <div className="w-full space-y-4 mb-10">
                             <div className="flex items-start gap-4 text-left bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                                 <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 font-black text-xs flex-shrink-0">1</div>
-                                <p className="text-xs font-bold text-[#1e1b4b] leading-snug">Pulse el botón inferior para abrir el chat con el bot de ADT.</p>
+                                <p className="text-xs font-bold text-[#1e1b4b] leading-snug">Pulse el botón inferior para abrir el chat con el bot de ANKA.</p>
                             </div>
                             <div className="flex items-start gap-4 text-left bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                                 <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 font-black text-xs flex-shrink-0">2</div>
@@ -402,10 +401,10 @@ export const DriverApp: React.FC = () => {
                             </div>
                         </div>
 
-                        <button 
+                        <button
                             onClick={() => {
                                 logToBackend('INFO', 'Click en Abrir Telegram');
-                                window.open('https://t.me/ADT_System_Bot', '_blank');
+                                window.open('https://t.me/Anka_System_Bot', '_blank');
                             }}
                             className="w-full py-5 bg-[#0088cc] hover:bg-[#0077b5] text-white rounded-[24px] font-black uppercase tracking-widest flex items-center justify-center gap-3 active:scale-[0.97] transition-all shadow-xl shadow-[#0088cc]/30"
                         >
@@ -417,11 +416,11 @@ export const DriverApp: React.FC = () => {
                     <div className="flex-1 flex flex-col gap-4 animate-in slide-in-from-right-10 duration-500">
                         <div className="w-full h-full min-h-[400px] bg-slate-200 rounded-[32px] overflow-hidden border border-slate-200 shadow-2xl relative">
                             {location ? (
-                                <iframe 
-                                    width="100%" 
-                                    height="100%" 
-                                    frameBorder="0" 
-                                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${location.longitude-0.01},${location.latitude-0.01},${location.longitude+0.01},${location.latitude+0.01}&layer=mapnik&marker=${location.latitude},${location.longitude}`}
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    frameBorder="0"
+                                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${location.longitude - 0.01},${location.latitude - 0.01},${location.longitude + 0.01},${location.latitude + 0.01}&layer=mapnik&marker=${location.latitude},${location.longitude}`}
                                     allowFullScreen
                                     className="grayscale-[20%] brightness-[110%]"
                                 ></iframe>
@@ -431,7 +430,7 @@ export const DriverApp: React.FC = () => {
                                     <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Obteniendo señal GPS...</p>
                                 </div>
                             )}
-                            <button 
+                            <button
                                 onClick={() => {
                                     if (location) {
                                         window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination?.lat},${destination?.lng}&origin=${location.latitude},${location.longitude}`, '_blank');
@@ -498,11 +497,11 @@ export const DriverApp: React.FC = () => {
                                 {/* Map Mini (Simulated Interactive Map) */}
                                 <div className="w-full h-40 bg-slate-200 rounded-[32px] overflow-hidden relative shadow-inner border border-slate-200">
                                     {location ? (
-                                        <iframe 
-                                            width="100%" 
-                                            height="100%" 
-                                            frameBorder="0" 
-                                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${location.longitude-0.01},${location.latitude-0.01},${location.longitude+0.01},${location.latitude+0.01}&layer=mapnik&marker=${location.latitude},${location.longitude}`}
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            frameBorder="0"
+                                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${location.longitude - 0.01},${location.latitude - 0.01},${location.longitude + 0.01},${location.latitude + 0.01}&layer=mapnik&marker=${location.latitude},${location.longitude}`}
                                             className="grayscale-[30%] opacity-80"
                                         ></iframe>
                                     ) : (
@@ -580,34 +579,34 @@ export const DriverApp: React.FC = () => {
                         <div className="fixed bottom-24 left-0 w-full px-6 z-40 pointer-events-none">
                             <div className="max-w-lg mx-auto pointer-events-auto">
                                 {status === 'PENDING' && (
-                                    <button 
-                                        onClick={() => handleAction('EN_CAMINO')} 
+                                    <button
+                                        onClick={() => handleAction('EN_CAMINO')}
                                         className="w-full h-20 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-[24px] flex items-center justify-center gap-4 shadow-2xl shadow-indigo-500/40 active:scale-[0.96] transition-all font-black text-xl uppercase tracking-wider group"
                                     >
-                                        <Play size={28} fill="currentColor" className="group-active:scale-110 transition-transform" /> 
+                                        <Play size={28} fill="currentColor" className="group-active:scale-110 transition-transform" />
                                         Iniciar Viaje
                                     </button>
                                 )}
                                 {status === 'EN_CAMINO' && (
-                                    <button 
-                                        onClick={() => handleAction('LLEGUE')} 
+                                    <button
+                                        onClick={() => handleAction('LLEGUE')}
                                         className="w-full h-20 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-[24px] flex items-center justify-center gap-4 shadow-2xl shadow-indigo-500/40 active:scale-[0.96] transition-all font-black text-xl uppercase tracking-wider group"
                                     >
-                                        <CheckCircle size={28} className="group-active:scale-110 transition-transform" /> 
+                                        <CheckCircle size={28} className="group-active:scale-110 transition-transform" />
                                         Confirmar Llegada
                                     </button>
                                 )}
                                 {status === 'LLEGUE' && (
-                                    <button 
-                                        onClick={() => handleAction('CARGA_DESCARGA')} 
+                                    <button
+                                        onClick={() => handleAction('CARGA_DESCARGA')}
                                         className="w-full h-20 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-[24px] flex items-center justify-center gap-4 shadow-2xl shadow-indigo-500/40 active:scale-[0.96] transition-all font-black text-xl uppercase tracking-wider group"
                                     >
-                                        <Truck size={28} className="group-active:scale-110 transition-transform" /> 
+                                        <Truck size={28} className="group-active:scale-110 transition-transform" />
                                         Entrar a Sitio
                                     </button>
                                 )}
                                 {(status === 'CARGA_DESCARGA' || status === 'ENTREGADO') && (
-                                    <button 
+                                    <button
                                         onClick={async () => {
                                             const wantsPhoto = window.confirm('¿Desea adjuntar una foto del remito/evidencia antes de finalizar?');
                                             if (wantsPhoto) {
@@ -618,15 +617,15 @@ export const DriverApp: React.FC = () => {
                                         }}
                                         className="w-full h-20 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-[24px] flex items-center justify-center gap-4 shadow-2xl shadow-indigo-500/40 active:scale-[0.96] transition-all font-black text-xl uppercase tracking-wider group"
                                     >
-                                        <Camera size={28} className="group-active:scale-110 transition-transform" /> 
+                                        <Camera size={28} className="group-active:scale-110 transition-transform" />
                                         Finalizar Viaje
-                                        <input 
+                                        <input
                                             id="photo-input"
-                                            type="file" 
-                                            accept="image/*" 
-                                            capture="environment" 
-                                            className="hidden" 
-                                            onChange={handlePhotoCapture} 
+                                            type="file"
+                                            accept="image/*"
+                                            capture="environment"
+                                            className="hidden"
+                                            onChange={handlePhotoCapture}
                                         />
                                     </button>
                                 )}
@@ -656,7 +655,7 @@ export const DriverApp: React.FC = () => {
                                 </div>
                                 <h2 className="text-3xl font-black text-[#1e1b4b] mb-4 uppercase tracking-tight">Misión Cumplida</h2>
                                 <p className="text-slate-500 text-sm font-medium leading-relaxed mb-12">
-                                    Auditoría de cierre completada correctamente.<br/>
+                                    Auditoría de cierre completada correctamente.<br />
                                     <span className="text-emerald-600 font-bold">Datos sincronizados con central.</span>
                                 </p>
                                 <button onClick={() => {
@@ -673,13 +672,13 @@ export const DriverApp: React.FC = () => {
 
             {/* Bottom Navigation */}
             <nav className="fixed bottom-0 w-full bg-white/90 backdrop-blur-lg border-t border-slate-200 px-8 pb-6 pt-4 flex justify-between items-center z-50 rounded-t-[32px] shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
-                <button 
+                <button
                     onClick={() => handleTabChange('home')}
                     className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'home' ? 'text-[#6366f1]' : 'text-slate-400'}`}
                 >
                     <Home size={24} fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={2.5} />
                 </button>
-                <button 
+                <button
                     onClick={() => {
                         handleTabChange('map');
                         if (location && destination) {
@@ -694,7 +693,7 @@ export const DriverApp: React.FC = () => {
                 >
                     <MapIcon size={24} fill={activeTab === 'map' ? 'currentColor' : 'none'} strokeWidth={2.5} />
                 </button>
-                <button 
+                <button
                     onClick={() => handleTabChange('telegram')}
                     className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'telegram' ? 'text-[#6366f1]' : 'text-slate-400'}`}
                 >

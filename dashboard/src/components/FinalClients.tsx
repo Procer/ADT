@@ -1,4 +1,4 @@
-import { Building, Plus, Trash2, Mail, Key, BellRing, Search, UserCheck, Shield, RefreshCw, BadgeDollarSign, Edit2, ShieldCheck, ArrowRight, TrendingUp, X, Filter, Save, Building2, ExternalLink, LayoutList } from 'lucide-react';
+import { Building, Plus, Trash2, Mail, Key, Search, ShieldCheck, TrendingUp, X, Save, Building2, LayoutList, BadgeDollarSign, Edit2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PricingManager from './PricingManager';
@@ -16,7 +16,6 @@ export default function FinalClients({ tenantId }: { tenantId: string | null }) 
     const [showAuthorizedModal, setShowAuthorizedModal] = useState<any>(null);
     const [authorizedEmails, setAuthorizedEmails] = useState<any[]>([]);
     const [newAuthEmail, setNewAuthEmail] = useState({ email: '', asunto: 'SOLICITUD VIAJE' });
-    const [showNotificationModal, setShowNotificationModal] = useState<any>(null);
     const [showPricing, setShowPricing] = useState<{ id: string, name: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [sendingEmail, setSendingEmail] = useState(false);
@@ -153,6 +152,21 @@ export default function FinalClients({ tenantId }: { tenantId: string | null }) 
             notify(`Credenciales re-enviadas a ${email}`, 'success', 'Envío Exitoso');
         } catch (err: any) {
             notify('Error al re-enviar credenciales', 'error');
+        } finally {
+            setSendingEmail(false);
+        }
+    };
+
+    const handleSendClientCredentials = async (clientId: string) => {
+        try {
+            setSendingEmail(true);
+            const token = localStorage.getItem('admin_token');
+            const res = await axios.post(`${API_BASE_URL}/management/clients/${clientId}/send-credentials`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            notify(res.data.message, 'success', 'Envío Exitoso');
+        } catch (err: any) {
+            notify(err.response?.data?.message || 'Error al enviar credenciales', 'error');
         } finally {
             setSendingEmail(false);
         }
@@ -346,6 +360,9 @@ export default function FinalClients({ tenantId }: { tenantId: string | null }) 
                                     </button>
                                     <button onClick={() => { setShowAuthorizedModal(c); fetchAuthorizedEmails(c.id); }} className="btn-command" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
                                         <Mail size={18} /><span>Emails IA</span>
+                                    </button>
+                                    <button onClick={() => handleSendClientCredentials(c.id)} className="btn-command" style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#4ade80' }}>
+                                        <Mail size={18} /><span>Email Acceso</span>
                                     </button>
                                 </div>
                                 <div className="separator" />

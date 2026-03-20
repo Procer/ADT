@@ -43,7 +43,7 @@ export const Login: React.FC = () => {
         <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6">
             <div className="w-full max-w-md space-y-8">
                 <div className="text-center">
-                    <h1 className="text-4xl font-black text-white tracking-tighter">ADT CHOFER</h1>
+                    <h1 className="text-4xl font-black text-white tracking-tighter">ANKA CHOFER</h1>
                     <p className="text-slate-400 mt-2">Acceso con DNI y PIN</p>
                 </div>
 

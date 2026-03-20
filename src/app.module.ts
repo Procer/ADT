@@ -38,6 +38,7 @@ import { PaymentLot } from './database/entities/payment-lot.entity';
 import { LotDeduction } from './database/entities/lot-deduction.entity';
 import { AdtCredit } from './database/entities/adt-credit.entity';
 import { AdtRecaudacion } from './database/entities/adt-recaudacion.entity';
+import { AppLog } from './database/entities/app-log.entity';
 
 @Module({
   imports: [
@@ -71,7 +72,8 @@ import { AdtRecaudacion } from './database/entities/adt-recaudacion.entity';
         PaymentLot,
         LotDeduction,
         AdtCredit,
-        AdtRecaudacion
+        AdtRecaudacion,
+        AppLog
       ],
       synchronize: false,
       logging: true,

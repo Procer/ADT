@@ -248,7 +248,7 @@ function AppContent({
         <button onClick={() => setIsSidebarOpen(true)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
           <LayoutDashboard size={24} />
         </button>
-        <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--accent-blue)' }}>ADT SYSTEM</div>
+        <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--accent-blue)' }}>ANKA SYSTEM</div>
         <div style={{ width: 24 }} /> {/* Spacer */}
       </div>
 
@@ -256,9 +256,9 @@ function AppContent({
 
       <aside className="sidebar glass-panel">
         <div className="logo" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div className="logo-icon" style={{ background: 'var(--accent-blue)', color: 'white', padding: '0.5rem', borderRadius: '8px', fontWeight: 800 }}>ADT</div>
+          <div className="logo-icon" style={{ background: 'var(--accent-blue)', color: 'white', padding: '0.5rem', borderRadius: '8px', fontWeight: 800 }}>ANKA</div>
           <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 800 }}>ADT System</h2>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 800 }}>ANKA System</h2>
             <p style={{ fontSize: '0.6rem', opacity: 0.6 }}>
               {isFinalClient ? 'Portal Dador de Carga' : isImpersonating ? `Empresa: ${activeTenantName}` : 'Administración Global'}
             </p>
@@ -321,7 +321,7 @@ function AppContent({
                     <BadgeDollarSign size={18} /> <span>Estado de Cuenta Global</span>
                   </NavLink>
                   <NavLink to="/global-config" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                    <ShieldAlert size={18} /> <span>Administración ADT</span>
+                    <ShieldAlert size={18} /> <span>Administración ANKA</span>
                   </NavLink>
                   <NavLink to="/system-logs" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                     <Terminal size={18} /> <span>Auditoría de Acciones</span>
@@ -358,7 +358,7 @@ function AppContent({
                     <Truck size={18} /> <span>Unidades</span>
                   </NavLink>
                   <NavLink to="/finanzas" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                    <CreditCard size={18} /> <span>Estado de Cuenta ADT</span>
+                    <CreditCard size={18} /> <span>Estado de Cuenta ANKA</span>
                   </NavLink>
                   <NavLink to="/finance-360-collect" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                     <DollarSign size={18} /> <span>Cobranzas a Dadores</span>

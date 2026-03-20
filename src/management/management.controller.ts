@@ -78,6 +78,35 @@ export class ManagementController {
         return this.tripsService.findAll(tenantId, { estado, choferId, clientId });
     }
 
+    @Public()
+    @Post('public/web-contact')
+    async publicContact(@Body() body: { nombre: string, email: string, mensaje: string }) {
+        const { nombre, email, mensaje } = body;
+
+        const html = `
+            <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #6366f1;">Nueva Consulta desde la Web ANKA</h2>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Remitente:</strong> ${nombre}</p>
+                    <p><strong>Email de contacto:</strong> <a href="mailto:${email}">${email}</a></p>
+                    <p><strong>Mensaje:</strong></p>
+                    <p style="white-space: pre-wrap; font-style: italic;">${mensaje}</p>
+                </div>
+                <p style="font-size: 0.8em; color: #999;">Enviado automáticamente desde el sitio oficial anka.ar</p>
+            </div>
+        `;
+
+        // Enviamos el email a ambos destinatarios
+        const sent1 = await this.notificationsService.sendEmail('sistema.anka@gmail.com', `Nueva Consulta Web: ${nombre}`, html);
+        const sent2 = await this.notificationsService.sendEmail('derosasjm@gmail.com', `Nueva Consulta Web: ${nombre}`, html);
+
+        if (!sent1 && !sent2) {
+            throw new BadRequestException('El servidor no pudo procesar el envío. Verifique la configuración SMTP en el sistema.');
+        }
+
+        return { success: true, message: 'Consulta enviada correctamente.' };
+    }
+
     // --- CONFIGURACIÓN GLOBAL ---
 
     @Public()
@@ -755,6 +784,52 @@ export class ManagementController {
         }
 
         return { success: true, message: `Credenciales re-enviadas a ${user.email}` };
+    }
+
+    @Public()
+    @Post('clients/:id/send-credentials')
+    async sendClientCredentials(@Param('id') id: string) {
+        const client = await this.clientRepo.findOne({ where: { id } });
+        if (!client) throw new NotFoundException('Dador de carga no encontrado');
+
+        const user = await this.userRepo.findOne({
+            where: { clientId: id, role: UserRole.CLIENT }
+        });
+
+        if (!user) {
+            throw new BadRequestException('Este dador no tiene un usuario de acceso creado. Por favor, créelo desde el botón Acceso.');
+        }
+
+        // Restablecer contraseña a la estándar ADT-321
+        const passwordHash = await bcrypt.hash('ADT-321', 10);
+        user.passwordHash = passwordHash;
+        user.mustChangePassword = true;
+        await this.userRepo.save(user);
+
+        // Enviar email al email configurado en el CLIENTE (no necesariamente el del usuario)
+        const recipientEmail = client.email || user.email;
+
+        const tenant = await this.tenantRepo.findOne({ where: { id: client.tenantId } });
+        const html = `
+            <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #6366f1;">Sus Credenciales de Acceso - ANKA</h2>
+                <p>Se han generado los datos para que ingrese al portal de seguimiento operativo de <strong>${client.nombreRazonSocial}</strong>.</p>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Usuario / Email:</strong> ${user.email}</p>
+                    <p><strong>Contraseña Temporal:</strong> ADT-321</p>
+                </div>
+                <p>Puede ingresar aquí:</p>
+                <a href="${process.env.FRONTEND_URL || 'https://sistema.anka.ar'}" style="display: inline-block; padding: 10px 20px; background: #6366f1; color: white; text-decoration: none; border-radius: 5px;">Ir al Portal Operativo</a>
+                <p style="margin-top: 20px; font-size: 0.8em; color: #666;">Por seguridad, cambie la contraseña al ingresar por primera vez.</p>
+            </div>
+        `;
+
+        const sent = await this.notificationsService.sendEmail(recipientEmail, 'Accesos al Portal ANKA Logística', html, tenant || undefined);
+        if (!sent) {
+            throw new BadRequestException('Error al enviar el email. Verifique que la configuración SMTP sea correcta (Global o del Tenant).');
+        }
+
+        return { success: true, message: `Credenciales enviadas a ${recipientEmail} con éxito.` };
     }
 
     // --- EMAILS AUTORIZADOS IA ---
