@@ -31,6 +31,7 @@ import { AdtRecaudacion } from '../database/entities/adt-recaudacion.entity';
 import { NotificationsService } from './notifications.service';
 import { SystemConfig } from '../database/entities/system-config.entity';
 import { EmailIngestionLog } from '../database/entities/email-ingestion-log.entity';
+import { AppLog } from '../database/entities/app-log.entity';
 import { Public } from '../auth/public.decorator';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
@@ -826,7 +827,7 @@ export class ManagementController {
 
         const sent = await this.notificationsService.sendEmail(recipientEmail, 'Accesos al Portal ANKA Logística', html, tenant || undefined);
         if (!sent) {
-            throw new BadRequestException('Error al enviar el email. Verifique que la configuración SMTP sea correcta (Global o del Tenant).');
+            throw new BadRequestException('Error al enviar el email. Si usa Gmail, verifique que use "Contraseña de Aplicación". Más detalles en Errores de Apps.');
         }
 
         return { success: true, message: `Credenciales enviadas a ${recipientEmail} con éxito.` };
@@ -953,7 +954,7 @@ export class ManagementController {
         const sent = await this.notificationsService.sendEmail(user.email, 'Accesos ADT - ' + (tenant?.nombreEmpresa || ''), html, tenant || undefined);
 
         if (!sent) {
-            throw new BadRequestException('El sistema no pudo enviar el email. Verifique la configuración SMTP Global o de la Empresa.');
+            throw new BadRequestException('El sistema no pudo enviar el email. Si usa Gmail, verifique que esté usando una "Contraseña de Aplicación". Más info en Errores de Apps.');
         }
 
         return { success: true, message: `Credenciales enviadas a ${user.email} con éxito.` };
@@ -1155,5 +1156,14 @@ export class ManagementController {
             context,
             tenant.geminiApiKey
         );
+    }
+
+    @Get('pwa-logs')
+    async getPwaLogs() {
+        // Obtenemos los últimos 100 logs del sistema (incluyendo errores SMTP)
+        return this.dataSource.getRepository(AppLog).find({
+            order: { timestamp: 'DESC' },
+            take: 100
+        });
     }
 }
