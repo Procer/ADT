@@ -156,15 +156,26 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                 adminNameBypass: currentUser.nombreCompleto || 'Administrador'
             };
 
-            await axios.post(`${API_BASE_URL}/trips`, payload, { headers: { Authorization: `Bearer ${token}` } });
+            if (selectedTripId) {
+                // ACTUALIZAR VIAJE EXISTENTE (Solicitado -> Pendiente)
+                await axios.patch(`${API_BASE_URL}/trips/${selectedTripId}`, {
+                    ...payload,
+                    estado: 'PENDIENTE'
+                }, { headers: { Authorization: `Bearer ${token}` } });
+                notify('Viaje asignado con éxito', 'success');
+            } else {
+                // CREAR VIAJE NUEVO
+                await axios.post(`${API_BASE_URL}/trips`, payload, { headers: { Authorization: `Bearer ${token}` } });
+                notify('Viaje despachado con éxito', 'success');
+            }
 
             setShowModal(false);
+            setSelectedTripId(null);
             setNewTrip({
                 choferId: '', unidadId: '', clientId: '', destinoNombre: '',
                 destinoLat: -34.6037, destinoLng: -58.3816, mercaderiaTipo: '',
                 volumen: '', pesoToneladas: 0
             });
-            notify('Viaje despachado con éxito', 'success');
             fetchTrips();
         } catch (err: any) { notify(err.response?.data?.message || 'Error', 'error'); }
     };
@@ -331,6 +342,7 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                                         unidadId: ''
                                                     });
                                                     setSelectedTripId(trip.id); // Guardamos el ID del viaje a asignar
+                                                    setSelectedAddressLabel(trip.destinoNombre || 'Zárate, Partido de Zárate');
                                                     setFormTab('logistica');
                                                     setShowModal(true);
                                                 }} className="btn-command-txt" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
