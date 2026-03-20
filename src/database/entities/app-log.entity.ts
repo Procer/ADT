@@ -29,8 +29,8 @@ export class AppLog {
     metadata: string; // JSON con stack trace o datos de la petición
 
     @Column({ name: 'user_id', nullable: true })
-    userId: string; // Si el error fue de un usuario logueado
+    userId: string | null; // Si el error fue de un usuario logueado
 
     @Column({ name: 'tenant_id', nullable: true })
-    tenantId: string;
+    tenantId: string | null;
 }

@@ -83,13 +83,15 @@ export class NotificationsService {
             this.logger.error(`[SMTP ERROR] to ${to}: ${error.message} - Check your credentials or Gmail App Password.`);
 
             // Persistir Error en Base de Datos para el Super Admin
-            await this.logRepo.save({
+            const appLog = this.logRepo.create({
                 contexto: 'SMTP_SERVICE',
                 level: LogLevel.CRITICAL,
                 mensaje: `Fallo de envío a ${to}: ${error.message}`,
                 metadata: JSON.stringify({ subject, tenantId: tenant?.id || 'GLOBAL', stack: error.stack }),
-                tenantId: tenant?.id || null
+                tenantId: tenant?.id || null,
+                userId: null
             });
+            await this.logRepo.save(appLog);
 
             return false;
         }
