@@ -28,6 +28,7 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
     const [showModal, setShowModal] = useState(false);
     const [formTab, setFormTab] = useState<'logistica' | 'carga'>('logistica');
     const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+    const [confirmingTripId, setConfirmingTripId] = useState<string | null>(null);
     const [period, setPeriod] = useState<'DAY' | 'WEEK' | 'FORTNIGHT' | 'MONTH' | 'ALL'>('ALL');
     const [stats, setStats] = useState({ count: 0, totalWeight: 0, totalKm: 0, totalMoney: 0, newTripsCount: 0, creditTripsCount: 0 });
     const [showTour, setShowTour] = useState(false);
@@ -156,9 +157,9 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                 adminNameBypass: currentUser.nombreCompleto || 'Administrador'
             };
 
-            if (selectedTripId) {
+            if (confirmingTripId) {
                 // ACTUALIZAR VIAJE EXISTENTE (Solicitado -> Pendiente)
-                await axios.patch(`${API_BASE_URL}/trips/${selectedTripId}`, {
+                await axios.patch(`${API_BASE_URL}/trips/${confirmingTripId}`, {
                     ...payload,
                     estado: 'PENDIENTE'
                 }, { headers: { Authorization: `Bearer ${token}` } });
@@ -170,7 +171,7 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
             }
 
             setShowModal(false);
-            setSelectedTripId(null);
+            setConfirmingTripId(null);
             setNewTrip({
                 choferId: '', unidadId: '', clientId: '', destinoNombre: '',
                 destinoLat: -34.6037, destinoLng: -58.3816, mercaderiaTipo: '',
@@ -319,7 +320,8 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                                     choferId: '',
                                                     unidadId: ''
                                                 });
-                                                setSelectedTripId(trip.id);
+                                                setConfirmingTripId(trip.id);
+                                                setSelectedAddressLabel(trip.destinoNombre || 'Zárate, Partido de Zárate');
                                                 setFormTab('logistica');
                                                 setShowModal(true);
                                             }
@@ -341,7 +343,7 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                                         choferId: '',
                                                         unidadId: ''
                                                     });
-                                                    setSelectedTripId(trip.id); // Guardamos el ID del viaje a asignar
+                                                    setConfirmingTripId(trip.id); // Guardamos el ID del viaje a asignar
                                                     setSelectedAddressLabel(trip.destinoNombre || 'Zárate, Partido de Zárate');
                                                     setFormTab('logistica');
                                                     setShowModal(true);
@@ -508,8 +510,8 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                         SIGUIENTE <ArrowRight size={20} />
                                     </button>
                                 ) : (
-                                    <button onClick={executeCreate} className="btn-primary" style={{ padding: '1.1rem 4rem', borderRadius: '16px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'linear-gradient(135deg, #22c55e, #16a34a)', color: 'black', boxShadow: '0 10px 20px -5px rgba(34, 197, 94, 0.4)' }}>
-                                        <Save size={20} /> DESPACHAR
+                                    <button onClick={executeCreate} className="btn-primary" style={{ padding: '1.1rem 4rem', borderRadius: '16px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.75rem', background: confirmingTripId ? 'linear-gradient(135deg, #3b82f6, #6366f1)' : 'linear-gradient(135deg, #22c55e, #16a34a)', color: 'white', boxShadow: confirmingTripId ? '0 10px 20px -5px rgba(59, 130, 246, 0.4)' : '0 10px 20px -5px rgba(34, 197, 94, 0.4)' }}>
+                                        <Save size={20} /> {confirmingTripId ? 'CONFIRMAR ASIGNACIÓN' : 'DESPACHAR VIAJE'}
                                     </button>
                                 )}
                             </div>
