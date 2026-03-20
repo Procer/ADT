@@ -296,15 +296,52 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                 const peso = Number(trip.pesoToneladas || 0);
                                 return (
                                     <tr key={trip.id}>
-                                        <td id={i === 0 ? 'tour-col-cp' : ''} style={{ fontFamily: 'monospace', fontWeight: 900, color: '#3b82f6' }}>{trip.numeroCP}</td>
+                                        <td id={i === 0 ? 'tour-col-cp' : ''} style={{ fontFamily: 'monospace', fontWeight: 900, color: '#3b82f6', cursor: trip.estado === 'SOLICITADO' ? 'pointer' : 'default' }} onClick={() => {
+                                            if (trip.estado === 'SOLICITADO') {
+                                                setNewTrip({
+                                                    clientId: trip.client?.id || '',
+                                                    destinoNombre: trip.destinoNombre || '',
+                                                    destinoLat: trip.destinoLat || -34.6037,
+                                                    destinoLng: trip.destinoLng || -58.3816,
+                                                    mercaderiaTipo: trip.mercaderiaTipo || '',
+                                                    pesoToneladas: trip.pesoToneladas || 0,
+                                                    choferId: '',
+                                                    unidadId: ''
+                                                });
+                                                setSelectedTripId(trip.id);
+                                                setFormTab('logistica');
+                                                setShowModal(true);
+                                            }
+                                        }}>{trip.numeroCP}</td>
                                         <td id={i === 0 ? 'tour-col-cliente' : ''} style={{ fontWeight: 700 }}>{trip.client?.nombreRazonSocial}</td>
                                         <td><div style={{ fontWeight: 600 }}>{trip.chofer?.nombre}</div><div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{trip.unidad?.patente}</div></td>
                                         <td id={i === 0 ? 'tour-col-peso' : ''}><div>{trip.mercaderiaTipo || 'General'}</div><div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#4ade80' }}>{peso.toFixed(1)} Ton ({(peso * 1000).toLocaleString()} Kg)</div></td>
                                         <td><span id={i === 0 ? 'tour-viajes-estados' : ''} style={{ padding: '0.25rem 0.5rem', background: style.bg, color: style.color, borderRadius: '6px', fontSize: '0.6rem', fontWeight: 800 }}>{style.label}</span></td>
                                         <td style={{ textAlign: 'right' }}><div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
-                                            <button id={i === 0 ? 'tour-btn-seguimiento' : ''} onClick={() => setSelectedTripId(trip.id)} className="btn-command-txt" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' }}>
-                                                <MapIcon size={12} /> Seguimiento de Viaje
-                                            </button>
+                                            {trip.estado === 'SOLICITADO' && (
+                                                <button onClick={() => {
+                                                    setNewTrip({
+                                                        clientId: trip.client?.id || '',
+                                                        destinoNombre: trip.destinoNombre || '',
+                                                        destinoLat: trip.destinoLat || -34.6037,
+                                                        destinoLng: trip.destinoLng || -58.3816,
+                                                        mercaderiaTipo: trip.mercaderiaTipo || '',
+                                                        pesoToneladas: trip.pesoToneladas || 0,
+                                                        choferId: '',
+                                                        unidadId: ''
+                                                    });
+                                                    setSelectedTripId(trip.id); // Guardamos el ID del viaje a asignar
+                                                    setFormTab('logistica');
+                                                    setShowModal(true);
+                                                }} className="btn-command-txt" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#818cf8', border: '1px solid rgba(99, 102, 241, 0.3)' }}>
+                                                    <User size={12} /> Asignar Chófer
+                                                </button>
+                                            )}
+                                            {trip.estado !== 'SOLICITADO' && (
+                                                <button id={i === 0 ? 'tour-btn-seguimiento' : ''} onClick={() => setSelectedTripId(trip.id)} className="btn-command-txt" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' }}>
+                                                    <MapIcon size={12} /> Seguimiento de Viaje
+                                                </button>
+                                            )}
                                             {trip.estado !== 'FINALIZADO' && trip.estado !== 'ANULADO' && (
                                                 <button id={i === 0 ? 'tour-btn-anular' : ''} onClick={() => { const m = window.prompt('Motivo de anulación:'); if (m) handleCancel(trip.id, m); }} className="btn-command-txt" style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#f87171' }}>
                                                     <XCircle size={12} /> Anular
