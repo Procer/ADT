@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Lightbulb, X, ChevronDown, ChevronUp, CheckCircle2, PlayCircle, ChevronRight } from 'lucide-react';
+import { Lightbulb, X, ChevronDown, ChevronUp, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface VisualHelpCardProps {
     sectionId: string;
@@ -8,7 +8,6 @@ interface VisualHelpCardProps {
     steps?: string[];
     tips?: string[];
     concepts?: { term: string; explanation: string }[];
-    onStartTour?: () => void;
 }
 
 export default function VisualHelpCard({
@@ -18,7 +17,6 @@ export default function VisualHelpCard({
     steps = [],
     tips = [],
     concepts = [],
-    onStartTour
 }: VisualHelpCardProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -39,83 +37,55 @@ export default function VisualHelpCard({
         setIsVisible(false);
     };
 
-    const startTour = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (onStartTour) {
-            onStartTour();
-            return;
-        }
-        setIsExpanded(true);
-        setActiveStep(0);
-    };
 
     if (!isVisible) return null;
 
     return (
         <div className="glass-panel help-card-container" style={{
-            marginBottom: '1.5rem',
-            borderLeft: '4px solid var(--accent-blue)',
+            marginBottom: isExpanded ? '1.5rem' : '0.5rem',
+            borderLeft: isExpanded ? '4px solid var(--accent-blue)' : '2px solid rgba(56, 189, 248, 0.3)',
             overflow: 'hidden',
             animation: 'fadeInAiuto 0.5s ease-out',
-            background: activeStep !== null ? 'rgba(56, 189, 248, 0.05)' : 'var(--glass-bg)',
-            transition: 'all 0.4s ease'
+            background: activeStep !== null ? 'rgba(56, 189, 248, 0.05)' : isExpanded ? 'var(--glass-bg)' : 'transparent',
+            transition: 'all 0.4s ease',
+            boxShadow: isExpanded ? '0 10px 25px -5px rgba(0, 0, 0, 0.3)' : 'none'
         }}>
             <div style={{
-                padding: '1rem 1.5rem',
+                padding: isExpanded ? '1rem 1.5rem' : '0.5rem 1rem',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                background: isExpanded ? 'rgba(56, 189, 248, 0.12)' : 'rgba(56, 189, 248, 0.07)',
+                background: isExpanded ? 'rgba(56, 189, 248, 0.12)' : 'none',
                 cursor: 'pointer',
                 userSelect: 'none'
             }} onClick={() => setIsExpanded(!isExpanded)}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div className={`help-icon-wrapper ${!isExpanded ? 'pulse-icon' : ''}`} style={{
-                        background: 'var(--accent-blue)',
-                        padding: '0.6rem',
-                        borderRadius: '14px',
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{
+                        background: isExpanded ? 'var(--accent-blue)' : 'rgba(56, 189, 248, 0.1)',
+                        padding: '0.4rem',
+                        borderRadius: '10px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(56, 189, 248, 0.3)'
+                        color: isExpanded ? 'white' : 'var(--accent-blue)'
                     }}>
-                        <Lightbulb size={20} color="white" />
+                        <Lightbulb size={isExpanded ? 18 : 14} />
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 900, margin: 0, color: 'white' }}>Guía Interactiva: {title}</h3>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{isExpanded ? 'Leé los pasos para dominar esta sección' : 'Hacé clic para ver cómo usar esta pantalla'}</div>
+                        <h3 style={{ fontSize: isExpanded ? '1rem' : '0.8rem', fontWeight: 900, margin: 0, color: 'white', opacity: isExpanded ? 1 : 0.7 }}>
+                            {isExpanded ? `Guía Interactiva: ${title}` : `${title} (Ayuda)`}
+                        </h3>
+                        {isExpanded && <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>Leé los pasos para dominar esta sección</div>}
                     </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    {!isExpanded && (
-                        <button
-                            onClick={startTour}
-                            className="tour-btn"
-                            style={{
-                                background: 'var(--accent-blue)',
-                                color: 'white',
-                                border: 'none',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '8px',
-                                fontSize: '0.75rem',
-                                fontWeight: 800,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                cursor: 'pointer',
-                                animation: 'bounceX 2s infinite'
-                            }}
-                        >
-                            <PlayCircle size={16} /> INICIAR GUÍA
-                        </button>
-                    )}
-                    {isExpanded ? <ChevronUp size={20} opacity={0.5} /> : <ChevronDown size={20} opacity={0.5} />}
+                    {isExpanded ? <ChevronUp size={18} opacity={0.5} /> : <ChevronDown size={14} opacity={0.4} />}
                     <button
                         onClick={(e) => { e.stopPropagation(); handleDismiss(); }}
-                        style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.4rem', borderRadius: '8px' }}
+                        style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.2rem', borderRadius: '6px', opacity: 0.3 }}
                     >
-                        <X size={18} />
+                        <X size={isExpanded ? 18 : 14} />
                     </button>
                 </div>
             </div>

@@ -130,7 +130,7 @@ import AppLogs from './components/AppLogs';
 import SolicitudesEntrantes from './components/SolicitudesEntrantes';
 import Finance360ToCollect from './components/Finance360ToCollect';
 import Finance360Settlements from './components/Finance360Settlements';
-import AiChatCopilot from './components/AiChatCopilot';
+// import AiChatCopilot from './components/AiChatCopilot';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -183,33 +183,40 @@ function AppContent({
             height: 100%;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1100;
           }
           @media (max-width: 1024px) {
             .mobile-header { display: flex; }
             .sidebar {
               position: fixed;
-              left: -280px;
+              left: 0;
               top: 0;
               bottom: 0;
+              transform: translateX(-110%);
             }
             .sidebar-open .sidebar {
-              left: 0;
+              transform: translateX(0);
               box-shadow: 20px 0 50px rgba(0,0,0,0.5);
             }
             .main-content {
-              padding-top: 60px !important;
+              padding: 1rem 0.5rem !important;
+              padding-top: 70px !important;
             }
             .sidebar-overlay {
               display: none;
               position: fixed;
               inset: 0;
-              background: rgba(0,0,0,0.5);
+              background: rgba(0,0,0,0.6);
               backdrop-filter: blur(4px);
               z-index: 1050;
+              opacity: 0;
+              transition: opacity 0.3s ease;
             }
-            .sidebar-open .sidebar-overlay { display: block; }
+            .sidebar-open .sidebar-overlay { 
+              display: block;
+              opacity: 1;
+            }
           }
           
           /* FIX DEFINITIVO E INTELIGENTE PARA MODALES */
@@ -234,11 +241,12 @@ function AppContent({
           }
           @media (max-width: 1024px) {
             .modal-overlay { 
-              padding: 8vh 0.5rem 10rem 0.5rem; /* En celular también un poco más abajo */
+              padding: 4vh 0.5rem 2rem 0.5rem; /* Reducimos notablemente el padding superior e inferior */
             }
             .modal-content { 
               width: 100% !important; 
               border-radius: 20px !important;
+              margin-bottom: 0 !important;
             }
           }
         `}</style>
@@ -461,10 +469,11 @@ function AppContent({
           <Route path="/" element={<Navigate to={currentUser?.role === 'CLIENT' ? '/client-portal' : '/overview'} replace />} />
         </Routes>
 
-        {/* Floating AI Copilot - Visible para Admin y Clientes */}
+        {/* Floating AI Copilot - Oculto temporalmente
         {effectiveTenantId && (
           <AiChatCopilot tenantId={effectiveTenantId} />
         )}
+        */}
       </main>
     </div>
   );

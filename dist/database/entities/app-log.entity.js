@@ -38,27 +38,27 @@ __decorate([
     __metadata("design:type", Date)
 ], AppLog.prototype, "timestamp", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'contexto', length: 100 }),
+    (0, typeorm_1.Column)({ name: 'contexto', type: 'nvarchar', length: 100 }),
     __metadata("design:type", String)
 ], AppLog.prototype, "contexto", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'level', type: 'varchar', length: 20, default: LogLevel.ERROR }),
+    (0, typeorm_1.Column)({ name: 'level', type: 'nvarchar', length: 20, default: LogLevel.ERROR }),
     __metadata("design:type", String)
 ], AppLog.prototype, "level", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'mensaje', type: 'text' }),
+    (0, typeorm_1.Column)({ name: 'mensaje', type: 'nvarchar', length: 'max' }),
     __metadata("design:type", String)
 ], AppLog.prototype, "mensaje", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'metadata', type: 'text', nullable: true }),
+    (0, typeorm_1.Column)({ name: 'metadata', type: 'nvarchar', length: 'max', nullable: true }),
     __metadata("design:type", String)
 ], AppLog.prototype, "metadata", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'user_id', nullable: true }),
+    (0, typeorm_1.Column)({ name: 'user_id', type: 'nvarchar', length: 255, nullable: true }),
     __metadata("design:type", Object)
 ], AppLog.prototype, "userId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'tenant_id', nullable: true }),
+    (0, typeorm_1.Column)({ name: 'tenant_id', type: 'nvarchar', length: 255, nullable: true }),
     __metadata("design:type", Object)
 ], AppLog.prototype, "tenantId", void 0);
 exports.AppLog = AppLog = __decorate([

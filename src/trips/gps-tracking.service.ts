@@ -109,6 +109,29 @@ export class GpsTrackingService {
                 }
             }
         }
+        
+        // --- CÁLCULO DE ODÓMETRO (Kilómetros recorridos) ---
+        // Recuperamos el último ping para calcular el delta de distancia (antes de guardar el nuevo)
+        const lastPing = await this.gpsRepo.findOne({
+            where: { cpId },
+            order: { timestampDispositivo: 'DESC' }
+        });
+
+        if (lastPing && trip.estado === TripStatus.IN_PROGRESS) {
+            const distanceDeltaMts = await this.tripsService.getDistance(
+                lat, lng,
+                Number(lastPing.latitud), Number(lastPing.longitud)
+            );
+
+            // Evitar saltos erráticos por error de GPS (ej. > 5km en pocos segundos)
+            // Estándar logístico: 90km/h = 25m/s. Un ping cada 10s son 250m. 5000m es margen de seguridad alto.
+            if (distanceDeltaMts > 0 && distanceDeltaMts < 5000) {
+                const deltaKm = distanceDeltaMts / 1000;
+                trip.distanciaTotalRecorridaKm = Number(trip.distanciaTotalRecorridaKm || 0) + deltaKm;
+                // Guardamos el progreso en el viaje
+                await this.tripsRepo.save(trip);
+            }
+        }
 
         const ping = this.gpsRepo.create({
             cpId,

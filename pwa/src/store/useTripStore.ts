@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import localforage from 'localforage';
 
-export type TripStatus = 'IDLE' | 'PENDING' | 'EN_CAMINO' | 'LLEGUE' | 'CARGA_DESCARGA' | 'FINALIZADO';
+export type TripStatus = 'IDLE' | 'PENDING' | 'EN_CAMINO' | 'LLEGUE' | 'CARGA_DESCARGA' | 'ENTREGADO' | 'FINALIZADO';
 
 interface User {
     userId: string;
@@ -30,23 +30,25 @@ interface TripState {
     arrivalTime: number | null;
     entryTime: number | null;
     endTime: number | null;
-    destination: { 
-        lat: number; 
-        lng: number; 
+    destination: {
+        lat: number;
+        lng: number;
         name: string;
         numeroCP?: string;
         clienteNombre?: string;
+        mileage?: number;
     } | null;
     nextTrip: TripDetails | null;
     syncQueue: any[];
-    
+
     setUser: (user: User | null, token: string | null, tenantConfig?: any) => void;
-    setTrip: (tripId: string, destination: { 
-        lat: number; 
-        lng: number; 
+    setTrip: (tripId: string, destination: {
+        lat: number;
+        lng: number;
         name: string;
         numeroCP?: string;
         clienteNombre?: string;
+        mileage?: number;
     }) => void;
     setNextTrip: (trip: TripDetails | null) => void;
     updateStatus: (status: TripStatus) => void;
@@ -77,8 +79,8 @@ export const useTripStore = create<TripState>()(
             nextTrip: null,
             syncQueue: [],
 
-            setUser: (user, token, tenantConfig) => set({ 
-                user, 
+            setUser: (user, token, tenantConfig) => set({
+                user,
                 token,
                 tenantConfig: tenantConfig || null,
                 // Si cerramos sesión, limpiamos el viaje
@@ -95,9 +97,9 @@ export const useTripStore = create<TripState>()(
                 } : {})
             }),
 
-            setTrip: (tripId, destination) => set({ 
-                tripId, 
-                destination, 
+            setTrip: (tripId, destination) => set({
+                tripId,
+                destination,
                 // Al cargar un viaje nuevo, se queda en PENDING esperando el INICIAR VIAJE manual
                 status: 'PENDING',
                 startTime: null // Se seteará al darle INICIAR
@@ -115,8 +117,8 @@ export const useTripStore = create<TripState>()(
             }),
 
             addToSyncQueue: (event) => set((state) => {
-                const id = typeof crypto.randomUUID === 'function' 
-                    ? crypto.randomUUID() 
+                const id = typeof crypto.randomUUID === 'function'
+                    ? crypto.randomUUID()
                     : Math.random().toString(36).substring(2) + Date.now().toString(36);
                 return {
                     syncQueue: [...state.syncQueue, { ...event, id, timestamp_dispositivo: Date.now() }]

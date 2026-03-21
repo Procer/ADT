@@ -272,4 +272,6 @@ export declare class ManagementController {
         tenantId: string;
     }, req: any): Promise<any>;
     getPwaLogs(): Promise<AppLog[]>;
+    getAudits(tenantId: string): Promise<AuditLog[]>;
+    getSystemLogs(): Promise<AppLog[]>;
 }

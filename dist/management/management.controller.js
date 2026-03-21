@@ -660,7 +660,7 @@ let ManagementController = class ManagementController {
                 <p>Por seguridad, se le solicitará cambiar la contraseña al ingresar.</p>
             </div>
         `;
-        const sent = await this.notificationsService.sendEmail(user.email, 'Sus Credenciales ADT', html, tenant || undefined);
+        const sent = await this.notificationsService.sendEmail(user.email, 'Sus Credenciales ADT', html);
         if (!sent) {
             throw new common_1.BadRequestException('Error al enviar el email. Verifique la configuración SMTP.');
         }
@@ -695,7 +695,7 @@ let ManagementController = class ManagementController {
                 <p style="margin-top: 20px; font-size: 0.8em; color: #666;">Por seguridad, cambie la contraseña al ingresar por primera vez.</p>
             </div>
         `;
-        const sent = await this.notificationsService.sendEmail(recipientEmail, 'Accesos al Portal ANKA Logística', html, tenant || undefined);
+        const sent = await this.notificationsService.sendEmail(recipientEmail, 'Accesos al Portal ANKA Logística', html);
         if (!sent) {
             throw new common_1.BadRequestException('Error al enviar el email. Si usa Gmail, verifique que use "Contraseña de Aplicación". Más detalles en Errores de Apps.');
         }
@@ -790,7 +790,7 @@ let ManagementController = class ManagementController {
                 <p style="margin-top: 20px; font-size: 0.8em; color: #666;">Se le pedirá cambiar esta contraseña en su primer ingreso.</p>
             </div>
         `;
-        const sent = await this.notificationsService.sendEmail(user.email, 'Accesos ADT - ' + (tenant?.nombreEmpresa || ''), html, tenant || undefined);
+        const sent = await this.notificationsService.sendEmail(user.email, 'Accesos ADT - ' + (tenant?.nombreEmpresa || ''), html);
         if (!sent) {
             throw new common_1.BadRequestException('El sistema no pudo enviar el email. Si usa Gmail, verifique que esté usando una "Contraseña de Aplicación". Más info en Errores de Apps.');
         }
@@ -941,6 +941,18 @@ let ManagementController = class ManagementController {
             order: { timestamp: 'DESC' },
             take: 100
         });
+    }
+    async getAudits(tenantId) {
+        if (!tenantId)
+            throw new common_1.BadRequestException('tenantId is required');
+        return this.auditRepo.find({
+            where: { tenantId },
+            order: { fecha: 'DESC' },
+            take: 100
+        });
+    }
+    async getSystemLogs() {
+        return this.getPwaLogs();
     }
 };
 exports.ManagementController = ManagementController;
@@ -1348,6 +1360,19 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ManagementController.prototype, "getPwaLogs", null);
+__decorate([
+    (0, common_1.Get)('audits'),
+    __param(0, (0, common_1.Query)('tenantId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "getAudits", null);
+__decorate([
+    (0, common_1.Get)('logs'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "getSystemLogs", null);
 exports.ManagementController = ManagementController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('management'),

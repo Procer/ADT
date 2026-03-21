@@ -99,12 +99,27 @@ export default function Overview({ activeTrips = [], stats }: OverviewProps) {
             </div>
 
             {!stats ? (
-                <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--accent-blue)', fontWeight: 700 }}>
-                    Cargando estadísticas y mapa en vivo...
+                <div className="overview-content-layout" style={{ display: 'flex', flex: 1, gap: '1.5rem', position: 'relative', minHeight: '500px' }}>
+                    <div className="skeleton" style={{ flex: 1, borderRadius: '1.5rem', height: '100%' }}></div>
+                    <div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="skeleton" style={{ height: '120px', borderRadius: '16px' }}></div>
+                        <div className="skeleton" style={{ height: '120px', borderRadius: '16px' }}></div>
+                        <div className="skeleton" style={{ height: '60px', borderRadius: '16px', marginTop: 'auto' }}></div>
+                    </div>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flex: 1, gap: '1rem', position: 'relative', height: 'calc(100vh - 250px)', minHeight: '500px' }}>
-                    <div id="tour-overview-map" className="map-container" style={{ flex: 1, background: '#111', borderRadius: '1rem', overflow: 'hidden', border: '1px solid var(--glass-border)', position: 'relative' }}>
+                <div className="overview-content-layout" style={{ display: 'flex', flex: 1, gap: '1.5rem', position: 'relative', minHeight: '500px' }}>
+                    <style>{`
+                        .overview-content-layout { flex-direction: row; height: calc(100vh - 250px); }
+                        .overview-stats-panel { width: 300px; height: fit-content; }
+                        
+                        @media (max-width: 1024px) {
+                            .overview-content-layout { flex-direction: column; height: auto; }
+                            .map-container { height: 400px !important; flex: none !important; }
+                            .overview-stats-panel { width: 100% !important; }
+                        }
+                    `}</style>
+                    <div id="tour-overview-map" className="map-container" style={{ flex: 1, background: '#111', borderRadius: '1.5rem', overflow: 'hidden', border: '1px solid var(--glass-border)', position: 'relative', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)' }}>
                         <MapContainer
                             center={center}
                             zoom={firstWithCoords ? 10 : 12}
@@ -162,34 +177,35 @@ export default function Overview({ activeTrips = [], stats }: OverviewProps) {
                         `}</style>
                     </div>
 
-                    <div id="tour-overview-stats" className="glass-panel" style={{ width: '300px', padding: '1.5rem', height: 'fit-content', position: 'relative' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                            <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Resumen Real-Time</h2>
-                            <Bell size={18} className="text-secondary" />
+                    <div id="tour-overview-stats" className="glass-panel overview-stats-panel" style={{ padding: '2rem', position: 'relative', border: '1px solid var(--glass-border)', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Resumen Hoy</h2>
+                            <Bell size={20} className="text-secondary" />
                         </div>
 
-                        <div className="stat-card" style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', marginBottom: '1rem' }}>
-                            <div className="stat-label" style={{ fontSize: '0.8rem', opacity: 0.6 }}>Viajes Activos</div>
-                            <div className="stat-value" style={{ fontSize: '1.5rem', fontWeight: 800 }}>{stats.active || 0}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                            <div className="stat-card" style={{ background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                <div className="stat-label" style={{ fontSize: '0.7rem', opacity: 0.5, fontWeight: 800 }}>VIAJES ACTIVOS</div>
+                                <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 900, marginTop: '0.25rem' }}>{stats.active || 0}</div>
+                            </div>
+
+                            <div className="stat-card" style={{ background: 'rgba(56, 189, 248, 0.05)', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(56, 189, 248, 0.1)' }}>
+                                <div className="stat-label" style={{ fontSize: '0.7rem', color: 'var(--accent-blue)', fontWeight: 800 }}>AUDITORÍAS PENDIENTES</div>
+                                <div className="stat-value" style={{ fontSize: '2rem', fontWeight: 900, marginTop: '0.25rem', color: 'var(--accent-blue)' }}>{stats.audits || 0}</div>
+                            </div>
                         </div>
 
-                        <div className="stat-card" style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', marginBottom: '1rem' }}>
-                            <div className="stat-label" style={{ fontSize: '0.8rem', opacity: 0.6 }}>Auditorías Pendientes</div>
-                            <div className="stat-value" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--accent-blue)' }}>{stats.audits || 0}</div>
-                        </div>
-
-                        <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem' }}>
-                            <button style={{
+                        <div style={{ marginTop: '2.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '2rem' }}>
+                            <button className="btn-primary" style={{
                                 width: '100%',
-                                padding: '0.75rem',
-                                borderRadius: '0.5rem',
-                                background: 'var(--accent-blue)',
-                                color: 'white',
+                                padding: '1.25rem',
+                                borderRadius: '16px',
                                 border: 'none',
-                                fontWeight: 700,
-                                cursor: 'pointer'
+                                fontWeight: 800,
+                                fontSize: '0.85rem',
+                                boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)'
                             }}>
-                                Descargar Reporte Diario
+                                DESCARGAR REPORTE DIARIO
                             </button>
                         </div>
                     </div>

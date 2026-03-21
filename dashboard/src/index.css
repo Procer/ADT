@@ -21,9 +21,10 @@ body {
   margin: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   height: 100vh;
+  scroll-behavior: smooth;
 }
 
 .dashboard-container {
@@ -69,7 +70,7 @@ body {
     left: -280px;
     height: 100%;
   }
-  
+
   .sidebar.mobile-open {
     transform: translateX(280px);
   }
@@ -81,7 +82,7 @@ body {
   .show-mobile {
     display: block !important;
   }
-  
+
   .mobile-stack {
     flex-direction: column !important;
     align-items: stretch !important;
@@ -166,7 +167,7 @@ h3 {
 
 .nav-item {
   display: flex;
-  items-center: center;
+  align-items: center;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   color: var(--text-secondary);
@@ -223,4 +224,25 @@ h3 {
 .stat-value {
   font-size: 1.5rem;
   font-weight: 900;
+}
+
+/* Skeleton Loading System */
+.skeleton {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 25%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }

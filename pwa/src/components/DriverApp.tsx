@@ -3,8 +3,8 @@ import { useTripStore, type TripStatus } from '../store/useTripStore';
 import { useSyncQueue } from '../hooks/useSyncQueue';
 import {
     Play, CheckCircle, Truck, Camera, LogOut, User,
-    MapPin, Navigation, Info, ArrowRight, ShieldCheck,
-    Zap, Clock, ChevronRight, Activity, Home, List, Map as MapIcon, Lock, Send
+    MapPin, Navigation, ChevronRight, Activity, Home, Map as MapIcon, Send,
+    ShieldCheck, Clock
 } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 import axios from 'axios';
@@ -162,7 +162,8 @@ export const DriverApp: React.FC = () => {
                             lng: t.destinoLng || 0,
                             name: t.destinoNombre || 'Destino',
                             numeroCP: t.numeroCP,
-                            clienteNombre: t.client?.nombreRazonSocial || 'Dador de Carga'
+                            clienteNombre: t.client?.nombreRazonSocial || 'Dador de Carga',
+                            mileage: t.distanciaTotalRecorridaKm || 0
                         });
                     }
                 } else {
@@ -308,7 +309,7 @@ export const DriverApp: React.FC = () => {
         if (!file) return;
         try {
             triggerHaptic('heavy');
-            const compressed = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1280, useWebWorker: true });
+            await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1280, useWebWorker: true });
 
             // Marca de agua en nombre de archivo (Metadatos visuales)
             const watermark = `CP-${destination?.numeroCP}_LAT-${location?.latitude.toFixed(4)}_LNG-${location?.longitude.toFixed(4)}_TIME-${new Date().toISOString()}`;
@@ -366,8 +367,8 @@ export const DriverApp: React.FC = () => {
             {/* Toasts */}
             {toast && (
                 <div className={`fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-10 duration-300 border ${toast.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-100' :
-                        toast.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                            'bg-indigo-50 text-indigo-700 border-indigo-100'
+                    toast.type === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                        'bg-indigo-50 text-indigo-700 border-indigo-100'
                     }`}>
                     <Activity size={18} className={toast.type === 'error' ? 'text-rose-500' : 'text-indigo-500'} />
                     <p className="text-sm font-black uppercase tracking-tight">{toast.message}</p>
@@ -528,17 +529,22 @@ export const DriverApp: React.FC = () => {
                                         <p className="text-sm font-semibold text-slate-600 leading-snug">{destination.name}</p>
                                     </div>
 
-                                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative z-10">
-                                        <div className="flex-1">
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Distancia</p>
-                                            <p className="text-xl font-black text-[#1e1b4b]">
-                                                {distance ? `${(distance / 1000).toFixed(1)} km` : '---'}
+                                    <div className="grid grid-cols-3 gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative z-10">
+                                        <div className="text-center">
+                                            <p className="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1">Faltante</p>
+                                            <p className="text-lg font-black text-[#1e1b4b]">
+                                                {distance ? `${(distance / 1000).toFixed(1)}` : '---'} <span className="text-[10px]">km</span>
                                             </p>
                                         </div>
-                                        <div className="w-px h-8 bg-slate-200" />
-                                        <div className="flex-1">
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase">ETA Smart</p>
-                                            <p className="text-xl font-black text-[#1e1b4b]">{etaSmart}</p>
+                                        <div className="text-center border-x border-slate-200">
+                                            <p className="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1">Recorrido</p>
+                                            <p className="text-lg font-black text-indigo-600">
+                                                {destination?.mileage ? Number(destination.mileage).toFixed(1) : '0.0'} <span className="text-[10px]">km</span>
+                                            </p>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1">ETA Smart</p>
+                                            <p className="text-lg font-black text-[#1e1b4b]">{etaSmart}</p>
                                         </div>
                                     </div>
 

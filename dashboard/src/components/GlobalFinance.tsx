@@ -151,12 +151,20 @@ export default function GlobalFinance({ onSelectTenant }: { onSelectTenant: (id:
                     .finance-header { flex-direction: column !important; align-items: stretch !important; gap: 1.5rem !important; }
                     .finance-controls { flex-direction: column !important; width: 100% !important; }
                     .control-item { width: 100% !important; justify-content: space-between !important; }
-                    .table-container { overflow-x: auto !important; }
-                    .payment-modal-content { grid-template-columns: 1fr !important; width: 95% !important; max-height: 95vh !important; }
-                    .payment-modal-left { border-right: none !important; border-bottom: 1px solid var(--glass-border) !important; padding: 1.5rem !important; }
-                    .payment-modal-right { padding: 1.5rem !important; }
-                    .history-modal { width: 95% !important; padding: 1rem !important; }
-                    .history-table th:nth-child(n+4), .history-table td:nth-child(n+4) { display: none !important; }
+                    .table-container { display: none !important; }
+                    .payment-modal-content { 
+                        display: flex !important; 
+                        flex-direction: column !important;
+                        width: 100% !important; 
+                        height: 100vh !important; 
+                        max-height: 100vh !important;
+                        border-radius: 0 !important;
+                    }
+                    .payment-modal-left { border-right: none !important; border-bottom: 1px solid var(--glass-border) !important; padding: 1.25rem !important; flex: 1; }
+                    .payment-modal-right { padding: 1.25rem !important; }
+                    .history-modal { width: 100% !important; height: 100vh !important; max-height: 100vh !important; padding: 1.25rem !important; border-radius: 0 !important; }
+                    .history-table th:nth-child(n+3), .history-table td:nth-child(n+3) { display: none !important; }
+                    .history-table th:nth-child(5), .history-table td:nth-child(5) { display: table-cell !important; }
                 }
             `}</style>
 
@@ -214,82 +222,169 @@ export default function GlobalFinance({ onSelectTenant }: { onSelectTenant: (id:
                 </div>
             </div>
 
-            <div className="glass-panel table-container" style={{ borderRadius: '20px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: isMobile ? '800px' : 'auto' }}>
-                    <thead>
-                        <tr style={{ background: 'rgba(255,255,255,0.02)', fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.5 }}>
-                            <th style={{ padding: '1.25rem' }}>Empresa</th>
-                            <th style={{ padding: '1.25rem' }}>Viajes</th>
-                            <th style={{ padding: '1.25rem' }}>Vales Usados</th>
-                            <th style={{ padding: '1.25rem' }}>A Cobrar</th>
-                            <th style={{ padding: '1.25rem' }}>Deuda</th>
-                            <th style={{ padding: '1.25rem' }}>Saldo Vales</th>
-                            <th style={{ padding: '1.25rem', textAlign: 'center' }}>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={7} style={{ padding: '4rem', textAlign: 'center' }}>
-                                <div className="animate-spin" style={{ width: '30px', height: '30px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--accent-blue)', borderRadius: '50%', margin: '0 auto' }} />
-                                <p style={{ marginTop: '1rem', opacity: 0.5, fontWeight: 600 }}>Cargando inteligencia financiera...</p>
-                            </td></tr>
-                        ) : filtered.length > 0 ? (
-                            filtered.map(t => (
-                                <tr key={t.tenantId} style={{ borderBottom: '1px solid var(--glass-border)', fontSize: '0.9rem', transition: 'background 0.2s' }} className="hover:bg-white/5">
-                                    <td style={{ padding: '1.25rem', fontWeight: 800 }}>{t.nombreEmpresa}</td>
-                                    <td style={{ padding: '1.25rem' }}>{t.totalTrips}</td>
-                                    <td style={{ padding: '1.25rem', color: '#4ade80', fontWeight: 700 }}>{t.paidTrips}</td>
-                                    <td style={{ padding: '1.25rem', color: t.pendingTrips > 0 ? '#f87171' : 'inherit' }}>{t.pendingTrips}</td>
-                                    <td style={{ padding: '1.25rem', fontWeight: 900, color: t.totalAmountOwed > 0 ? '#f87171' : 'inherit' }}>
+            {!loading && filtered.length > 0 && isMobile && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {filtered.map(t => (
+                        <div key={t.tenantId} className="glass-panel" style={{ padding: '1.5rem', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900 }}>{t.nombreEmpresa}</h3>
+                                    <span style={{ fontSize: '0.7rem', opacity: 0.5, fontWeight: 800 }}>{t.totalTrips} VIAJES TOTALES</span>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <div style={{ fontSize: '0.65rem', opacity: 0.5, fontWeight: 800 }}>DEUDA</div>
+                                    <div style={{ fontSize: '1.25rem', fontWeight: 950, color: t.totalAmountOwed > 0 ? '#f87171' : '#4ade80' }}>
                                         ${(t.totalAmountOwed || 0).toLocaleString('es-AR')}
-                                    </td>
-                                    <td style={{ padding: '1.25rem' }}>
-                                        <span style={{ background: 'rgba(251, 191, 36, 0.1)', color: '#fbbf24', padding: '0.3rem 0.6rem', borderRadius: '8px', fontWeight: 800, fontSize: '0.75rem', border: '1px solid rgba(251, 191, 36, 0.2)' }}>
-                                            {t.availableCredits} VALES
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '1.25rem' }}>
-                                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                                            <button
-                                                onClick={() => onSelectTenant(t.tenantId, 'finanzas')}
-                                                style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 800 }}
-                                            >
-                                                MÉTRICAS
-                                            </button>
-                                            <button
-                                                onClick={() => handleSendSettlement(t.tenantId)}
-                                                style={{ background: 'rgba(251, 191, 36, 0.1)', border: '1px solid rgba(251, 191, 36, 0.2)', color: '#fbbf24', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.3rem' }}
-                                            >
-                                                <Send size={12} /> LIQ.
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setShowPaymentModal(t);
-                                                    fetchPendingTrips(t.tenantId);
-                                                }}
-                                                style={{ background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#4ade80', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 900 }}
-                                            >
-                                                <CheckCircle2 size={12} /> COBRAR
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setShowHistoryModal(t);
-                                                    fetchHistory(t.tenantId);
-                                                }}
-                                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', opacity: 0.6 }}
-                                            >
-                                                PAGOS
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr><td colSpan={7} style={{ padding: '5rem', textAlign: 'center', opacity: 0.5, fontWeight: 600 }}>Sin registros financieros para este periodo.</td></tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
+                                <div>
+                                    <div style={{ fontSize: '0.6rem', opacity: 0.5, fontWeight: 800 }}>PAGADOS</div>
+                                    <div style={{ fontWeight: 800, color: '#4ade80' }}>{t.paidTrips}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '0.6rem', opacity: 0.5, fontWeight: 800 }}>PENDIENTES</div>
+                                    <div style={{ fontWeight: 800, color: t.pendingTrips > 0 ? '#f87171' : 'inherit' }}>{t.pendingTrips}</div>
+                                </div>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <div style={{ fontSize: '0.6rem', opacity: 0.5, fontWeight: 800, marginBottom: '0.4rem' }}>SALDO VALES</div>
+                                    <span style={{ background: 'rgba(251, 191, 36, 0.1)', color: '#fbbf24', padding: '0.3rem 0.6rem', borderRadius: '8px', fontWeight: 800, fontSize: '0.75rem', border: '1px solid rgba(251, 191, 36, 0.2)' }}>
+                                        {t.availableCredits} VALES DISPONIBLES
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                                <button
+                                    onClick={() => onSelectTenant(t.tenantId, 'finanzas')}
+                                    style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.75rem', borderRadius: '12px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 800 }}
+                                >
+                                    MÉTRICAS
+                                </button>
+                                <button
+                                    onClick={() => handleSendSettlement(t.tenantId)}
+                                    style={{ background: 'rgba(251, 191, 36, 0.1)', border: '1px solid rgba(251, 191, 36, 0.2)', color: '#fbbf24', padding: '0.75rem', borderRadius: '12px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                                >
+                                    <Send size={14} /> LIQUIDAR
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowPaymentModal(t);
+                                        fetchPendingTrips(t.tenantId);
+                                    }}
+                                    style={{ gridColumn: 'span 2', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#4ade80', padding: '1rem', borderRadius: '12px', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 900 }}
+                                >
+                                    <CheckCircle2 size={16} /> REGISTRAR COBRO
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowHistoryModal(t);
+                                        fetchHistory(t.tenantId);
+                                    }}
+                                    style={{ gridColumn: 'span 2', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.75rem', borderRadius: '12px', fontSize: '0.75rem', cursor: 'pointer', opacity: 0.6, fontWeight: 700 }}
+                                >
+                                    HISTORIAL DE PAGOS
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {!isMobile && (
+                <div className="glass-panel table-container" style={{ borderRadius: '20px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                        <thead>
+                            <tr style={{ background: 'rgba(255,255,255,0.02)', fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.5 }}>
+                                <th style={{ padding: '1.25rem' }}>Empresa</th>
+                                <th style={{ padding: '1.25rem' }}>Viajes</th>
+                                <th style={{ padding: '1.25rem' }}>Vales Usados</th>
+                                <th style={{ padding: '1.25rem' }}>A Cobrar</th>
+                                <th style={{ padding: '1.25rem' }}>Deuda</th>
+                                <th style={{ padding: '1.25rem' }}>Saldo Vales</th>
+                                <th style={{ padding: '1.25rem', textAlign: 'center' }}>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan={7} style={{ padding: '4rem', textAlign: 'center' }}>
+                                    <div className="animate-spin" style={{ width: '30px', height: '30px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--accent-blue)', borderRadius: '50%', margin: '0 auto' }} />
+                                    <p style={{ marginTop: '1rem', opacity: 0.5, fontWeight: 600 }}>Cargando inteligencia financiera...</p>
+                                </td></tr>
+                            ) : filtered.length > 0 ? (
+                                filtered.map(t => (
+                                    <tr key={t.tenantId} style={{ borderBottom: '1px solid var(--glass-border)', fontSize: '0.9rem', transition: 'background 0.2s' }} className="hover:bg-white/5">
+                                        <td style={{ padding: '1.25rem', fontWeight: 800 }}>{t.nombreEmpresa}</td>
+                                        <td style={{ padding: '1.25rem' }}>{t.totalTrips}</td>
+                                        <td style={{ padding: '1.25rem', color: '#4ade80', fontWeight: 700 }}>{t.paidTrips}</td>
+                                        <td style={{ padding: '1.25rem', color: t.pendingTrips > 0 ? '#f87171' : 'inherit' }}>{t.pendingTrips}</td>
+                                        <td style={{ padding: '1.25rem', fontWeight: 900, color: t.totalAmountOwed > 0 ? '#f87171' : 'inherit' }}>
+                                            ${(t.totalAmountOwed || 0).toLocaleString('es-AR')}
+                                        </td>
+                                        <td style={{ padding: '1.25rem' }}>
+                                            <span style={{ background: 'rgba(251, 191, 36, 0.1)', color: '#fbbf24', padding: '0.3rem 0.6rem', borderRadius: '8px', fontWeight: 800, fontSize: '0.75rem', border: '1px solid rgba(251, 191, 36, 0.2)' }}>
+                                                {t.availableCredits} VALES
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: '1.25rem' }}>
+                                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                                                <button
+                                                    onClick={() => onSelectTenant(t.tenantId, 'finanzas')}
+                                                    style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#60a5fa', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 800 }}
+                                                >
+                                                    MÉTRICAS
+                                                </button>
+                                                <button
+                                                    onClick={() => handleSendSettlement(t.tenantId)}
+                                                    style={{ background: 'rgba(251, 191, 36, 0.1)', border: '1px solid rgba(251, 191, 36, 0.2)', color: '#fbbf24', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                                                >
+                                                    <Send size={12} /> LIQ.
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setShowPaymentModal(t);
+                                                        fetchPendingTrips(t.tenantId);
+                                                    }}
+                                                    style={{ background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#4ade80', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 900 }}
+                                                >
+                                                    <CheckCircle2 size={12} /> COBRAR
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setShowHistoryModal(t);
+                                                        fetchHistory(t.tenantId);
+                                                    }}
+                                                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '10px', fontSize: '0.7rem', cursor: 'pointer', opacity: 0.6 }}
+                                                >
+                                                    PAGOS
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr><td colSpan={7} style={{ padding: '5rem', textAlign: 'center', opacity: 0.5, fontWeight: 600 }}>Sin registros financieros para este periodo.</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {loading && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="skeleton" style={{ height: isMobile ? '300px' : '60px', borderRadius: '20px' }}></div>
+                    ))}
+                </div>
+            )}
+
+            {!loading && filtered.length === 0 && (
+                <div style={{ padding: '5rem', textAlign: 'center', opacity: 0.5, fontWeight: 600, border: '1px dashed var(--glass-border)', borderRadius: '20px' }}>
+                    Sin registros financieros para este periodo.
+                </div>
+            )}
 
             {/* Modal de Cobro Vinculado */}
             {showPaymentModal && (

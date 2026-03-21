@@ -102,6 +102,18 @@ let GpsTrackingService = class GpsTrackingService {
                 }
             }
         }
+        const lastPing = await this.gpsRepo.findOne({
+            where: { cpId },
+            order: { timestampDispositivo: 'DESC' }
+        });
+        if (lastPing && trip.estado === update_trip_status_dto_1.TripStatus.IN_PROGRESS) {
+            const distanceDeltaMts = await this.tripsService.getDistance(lat, lng, Number(lastPing.latitud), Number(lastPing.longitud));
+            if (distanceDeltaMts > 0 && distanceDeltaMts < 5000) {
+                const deltaKm = distanceDeltaMts / 1000;
+                trip.distanciaTotalRecorridaKm = Number(trip.distanciaTotalRecorridaKm || 0) + deltaKm;
+                await this.tripsRepo.save(trip);
+            }
+        }
         const ping = this.gpsRepo.create({
             cpId,
             latitud: lat,
