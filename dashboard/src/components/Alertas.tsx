@@ -29,7 +29,7 @@ export default function Alertas({ tenantId }: { tenantId: string | null }) {
             const res = await axios.get(`${API_BASE_URL}/management/alerts?tenantId=${tenantId || ''}&resuelto=${filterResuelto}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setAlertas(res.data);
+            setAlertas(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error('Error fetching alerts', err);
         } finally {

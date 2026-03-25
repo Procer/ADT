@@ -28,12 +28,12 @@ export default function SolicitudesEntrantes({ tenantId }: { tenantId: string | 
             const res = await axios.get(`${API_BASE_URL}/management/trips/incoming-requests?tenantId=${tenantId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setRequests(res.data);
+            setRequests(Array.isArray(res.data) ? res.data : []);
 
             const logsRes = await axios.get(`${API_BASE_URL}/management/email-logs?tenantId=${tenantId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setLogs(logsRes.data);
+            setLogs(Array.isArray(logsRes.data) ? logsRes.data : []);
         } catch (err) {
             console.error('Error fetching incoming requests', err);
         } finally {

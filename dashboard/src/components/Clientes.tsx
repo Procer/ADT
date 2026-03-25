@@ -11,7 +11,7 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    
+
     const [userRole] = useState(() => {
         try {
             const user = JSON.parse(localStorage.getItem('admin_user') || '{}');
@@ -37,7 +37,7 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
             const res = await axios.get(`${API_BASE_URL}/management/tenants`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setTenants(res.data);
+            setTenants(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             notify('Error al cargar las empresas del ecosistema', 'error');
         } finally {
@@ -126,7 +126,7 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
 
     const handleDelete = async (id: string, name: string) => {
         if (!window.confirm(`¿ESTÁS ABSOLUTAMENTE SEGURO? Esta acción es IRREVERSIBLE y borrará TODOS los datos de ${name}.`)) return;
-        
+
         const secret = prompt('Escribe "ADT_CONFIRM_DELETE" para confirmar el borrado total:');
         if (secret !== 'ADT_CONFIRM_DELETE') {
             notify('Código de confirmación incorrecto', 'error');
@@ -225,7 +225,7 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
         }
     }
 
-    const filteredTenants = tenants.filter(t => 
+    const filteredTenants = tenants.filter(t =>
         t.nombreEmpresa.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -364,16 +364,16 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
                         <div key={t.id} className="glass-panel client-row" style={{ padding: '1.25rem 2rem', borderRadius: '24px', transition: 'background 0.3s' }}>
                             {/* Identidad */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                                <div style={{ 
-                                    width: '68px', 
-                                    height: '68px', 
-                                    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', 
-                                    borderRadius: '20px', 
-                                    overflow: 'hidden', 
-                                    display: 'flex', 
-                                    justifyContent: 'center', 
-                                    alignItems: 'center', 
-                                    boxShadow: '0 12px 25px -10px rgba(0,0,0,0.4), 0 4px 10px -5px rgba(0,0,0,0.2)', 
+                                <div style={{
+                                    width: '68px',
+                                    height: '68px',
+                                    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                                    borderRadius: '20px',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    boxShadow: '0 12px 25px -10px rgba(0,0,0,0.4), 0 4px 10px -5px rgba(0,0,0,0.2)',
                                     border: '1px solid rgba(255,255,255,0.1)',
                                     flexShrink: 0,
                                     transition: 'transform 0.3s ease'
@@ -387,36 +387,36 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
                                     )}
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                                    <div style={{ 
-                                        fontWeight: 900, 
-                                        fontSize: '1.35rem', 
-                                        color: 'white', 
+                                    <div style={{
+                                        fontWeight: 900,
+                                        fontSize: '1.35rem',
+                                        color: 'white',
                                         letterSpacing: '-0.02em',
                                         lineHeight: 1.1
                                     }}>
                                         {t.nombreEmpresa}
                                     </div>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
-                                        <span style={{ 
-                                            fontSize: '0.6rem', 
-                                            fontWeight: 900, 
-                                            background: 'rgba(59, 130, 246, 0.15)', 
-                                            color: 'var(--accent-blue)', 
-                                            padding: '1px 5px', 
+                                        <span style={{
+                                            fontSize: '0.6rem',
+                                            fontWeight: 900,
+                                            background: 'rgba(59, 130, 246, 0.15)',
+                                            color: 'var(--accent-blue)',
+                                            padding: '1px 5px',
                                             borderRadius: '4px',
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.05em'
                                         }}>Nodo Logístico</span>
                                         <span style={{ fontSize: '0.7rem', opacity: 0.3, fontFamily: 'monospace' }}>#{t.id.split('-')[0].toUpperCase()}</span>
-                                        
+
                                         {/* AVISO DE CLAVE ACTUALIZADA */}
-                                        <div style={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            gap: '4px', 
-                                            fontSize: '0.65rem', 
-                                            fontWeight: 800, 
-                                            padding: '2px 8px', 
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            fontSize: '0.65rem',
+                                            fontWeight: 800,
+                                            padding: '2px 8px',
                                             borderRadius: '6px',
                                             background: t.claveActualizada ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)',
                                             color: t.claveActualizada ? '#4ade80' : '#fbbf24',
@@ -521,7 +521,7 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
                                 </div>
                             </div>
                             <div style={{ padding: '1.5rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '20px', border: '1px dashed rgba(59, 130, 246, 0.3)' }}>
-                                <div style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--accent-blue)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><UserCheck size={18}/> Credenciales del Administrador</div>
+                                <div style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--accent-blue)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><UserCheck size={18} /> Credenciales del Administrador</div>
                                 <input type="text" placeholder="Nombre Completo" required value={newClient.adminName} onChange={e => setNewClient({ ...newClient, adminName: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '10px', marginBottom: '0.75rem' }} />
                                 <input type="email" placeholder="Email de Acceso" required value={newClient.adminEmail} onChange={e => setNewClient({ ...newClient, adminEmail: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '10px', marginBottom: '0.75rem' }} />
                                 <input type="password" placeholder="Contraseña Inicial" required value={newClient.adminPassword} onChange={e => setNewClient({ ...newClient, adminPassword: e.target.value })} style={{ width: '100%', padding: '0.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '10px' }} />
@@ -597,16 +597,16 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
                         </div>
                         <h2 style={{ fontWeight: 900, marginBottom: '0.5rem' }}>Administrador del Nodo</h2>
                         <p style={{ opacity: 0.5, fontSize: '0.85rem', marginBottom: '2rem' }}>Actualiza los datos de acceso para esta empresa.</p>
-                        
+
                         <form onSubmit={handleUpdateAdmin} style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
                                 <div style={{ marginBottom: '1rem' }}>
                                     <label style={{ fontSize: '0.65rem', fontWeight: 800, opacity: 0.4, textTransform: 'uppercase', marginBottom: '0.5rem', display: 'block' }}>Nombre Completo</label>
-                                    <input type="text" value={adminInfo.nombre} onChange={e => setAdminInfo({...adminInfo, nombre: e.target.value})} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem', borderRadius: '10px' }} />
+                                    <input type="text" value={adminInfo.nombre} onChange={e => setAdminInfo({ ...adminInfo, nombre: e.target.value })} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem', borderRadius: '10px' }} />
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '0.65rem', fontWeight: 800, opacity: 0.4, textTransform: 'uppercase', marginBottom: '0.5rem', display: 'block' }}>Correo Electrónico</label>
-                                    <input type="email" value={adminInfo.email} onChange={e => setAdminInfo({...adminInfo, email: e.target.value})} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem', borderRadius: '10px' }} />
+                                    <input type="email" value={adminInfo.email} onChange={e => setAdminInfo({ ...adminInfo, email: e.target.value })} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem', borderRadius: '10px' }} />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem' }}>
@@ -629,7 +629,7 @@ export default function Clientes({ onImpersonate }: { onImpersonate: (id: string
                         </div>
                         <h2 style={{ fontWeight: 900, marginBottom: '0.5rem', textAlign: 'center' }}>Nueva Clave Generada</h2>
                         <p style={{ opacity: 0.5, fontSize: '0.85rem', marginBottom: '2rem', textAlign: 'center' }}>Se ha restablecido el acceso para <b>{resetResult.empresa}</b>.</p>
-                        
+
                         <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
                             <div style={{ marginBottom: '1rem' }}>
                                 <div style={{ fontSize: '0.65rem', fontWeight: 800, opacity: 0.4, textTransform: 'uppercase', marginBottom: '0.25rem' }}>Usuario / Email</div>

@@ -81,7 +81,7 @@ export default function Choferes({ tenantId }: { tenantId: string | null }) {
         try {
             setLoading(true);
             const res = await axios.get(`${API_BASE_URL}/management/drivers?tenantId=${id || ''}`);
-            setDrivers(res.data);
+            setDrivers(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             notify('Error al cargar la lista de choferes', 'error');
         } finally {

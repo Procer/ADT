@@ -33,7 +33,7 @@ export default function GlobalFinance({ onSelectTenant }: { onSelectTenant: (id:
             const res = await axios.get(`${API_BASE_URL}/finance-v3/finance/global?month=${month}&year=${year}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setData(res.data);
+            setData(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error('Error fetching global finance', err);
         } finally {

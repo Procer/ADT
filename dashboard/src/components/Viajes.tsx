@@ -66,9 +66,9 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                 axios.get(`${API_BASE_URL}/units?tenantId=${tenantId || ''}`, { headers: { Authorization: `Bearer ${token}` } }),
                 axios.get(`${API_BASE_URL}/management/clients?tenantId=${tenantId || ''}`, { headers: { Authorization: `Bearer ${token}` } })
             ]);
-            setDrivers(driversRes.data);
-            setUnits(unitsRes.data);
-            setClients(clientsRes.data);
+            setDrivers(Array.isArray(driversRes.data) ? driversRes.data : []);
+            setUnits(Array.isArray(unitsRes.data) ? unitsRes.data : []);
+            setClients(Array.isArray(clientsRes.data) ? clientsRes.data : []);
         } catch (err) { console.error(err); }
     };
 
@@ -83,7 +83,8 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
             const res = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
 
             // Forzar conversión numérica de peso al recibir los datos
-            const enrichedTrips = res.data.map((t: any) => ({
+            const rawData = Array.isArray(res.data) ? res.data : [];
+            const enrichedTrips = rawData.map((t: any) => ({
                 ...t,
                 pesoToneladas: Number(t.peso_toneladas || t.pesoToneladas || 0)
             }));

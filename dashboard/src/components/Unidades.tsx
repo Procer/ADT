@@ -70,7 +70,7 @@ export default function Unidades({ tenantId }: { tenantId: string | null }) {
         try {
             setLoading(true);
             const res = await axios.get(`${API_BASE_URL}/units?tenantId=${id || ''}`);
-            setUnidades(res.data);
+            setUnidades(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             notify('Error al cargar unidades', 'error');
         } finally {
@@ -118,7 +118,7 @@ export default function Unidades({ tenantId }: { tenantId: string | null }) {
         try {
             const token = localStorage.getItem('admin_token');
             const res = await axios.post(`${API_BASE_URL}/units/bulk-import?tenantId=${selectedTenant}`, formData, {
-                headers: { 
+                headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
                 }
@@ -197,7 +197,7 @@ export default function Unidades({ tenantId }: { tenantId: string | null }) {
         setShowModal(true);
     };
 
-    const filteredUnits = unidades.filter(u => 
+    const filteredUnits = unidades.filter(u =>
         u.patente.toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.marca?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.modelo?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -461,7 +461,7 @@ export default function Unidades({ tenantId }: { tenantId: string | null }) {
                         </div>
                         <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                             <div style={{ fontSize: '0.7rem', fontWeight: 800, opacity: 0.5, textTransform: 'uppercase', marginBottom: '1rem' }}>Actualizaciones por Viajes</div>
-                            
+
                             {loadingTrips ? (
                                 <div style={{ textAlign: 'center', padding: '2rem', opacity: 0.5 }}>Cargando viajes...</div>
                             ) : unitTrips.length > 0 ? (

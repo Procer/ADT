@@ -53,6 +53,9 @@ export default function Finanzas({ tenantId }: { tenantId: string | null }) {
 
                 setBalance({
                     ...financeRes.data,
+                    breakdown: Array.isArray(financeRes.data?.breakdown) ? financeRes.data.breakdown : [],
+                    history: Array.isArray(financeRes.data?.history) ? financeRes.data.history : [],
+                    aging: Array.isArray(financeRes.data?.aging) ? financeRes.data.aging : [],
                     totalPaid
                 });
             } catch (err) {

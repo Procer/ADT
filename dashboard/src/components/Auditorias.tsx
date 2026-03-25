@@ -16,7 +16,7 @@ export default function Auditorias({ tenantId }: { tenantId: string | null }) {
                 const res = await axios.get(`${API_BASE_URL}/management/audits?tenantId=${tenantId || ''}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setAudits(res.data);
+                setAudits(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error('Error fetching audits', err);
             } finally {
