@@ -1,4 +1,4 @@
-import { Building2, Plus, ExternalLink, Mail, LayoutList, Search, LayoutGrid, UserCheck, RefreshCw, Edit2, Trash2, Save, AlertTriangle, DollarSign, Key, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { Building2, Plus, ExternalLink, Mail, LayoutList, Search, UserCheck, RefreshCw, Edit2, Trash2, Save, AlertTriangle, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNotification } from '../App';

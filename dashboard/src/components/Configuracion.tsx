@@ -1,4 +1,4 @@
-import { Settings, Mail, Cpu, Save, ShieldCheck, Info, ExternalLink, AlertCircle, Server, Lock, User, Inbox } from 'lucide-react';
+import { Settings, Mail, Cpu, Save, ShieldCheck, Info, ExternalLink, Inbox } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNotification } from '../App';

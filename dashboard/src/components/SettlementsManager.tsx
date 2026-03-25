@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Truck, Calendar, CheckCircle, Clock, AlertCircle, FileText, Download } from 'lucide-react';
+import { Truck, CheckCircle, Clock, FileText } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export default function SettlementsManager({ tenantId }: { tenantId: string | null }) {
     const [batches, setBatches] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const [_loading, setLoading] = useState(true);
     const [month, setMonth] = useState(new Date().getMonth() + 1);
-    const [year, setYear] = useState(new Date().getFullYear());
+    const [year, _setYear] = useState(new Date().getFullYear());
 
     const fetchData = async () => {
         if (!tenantId) return;
@@ -45,7 +45,7 @@ export default function SettlementsManager({ tenantId }: { tenantId: string | nu
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <select value={month} onChange={e => setMonth(Number(e.target.value))} className="glass-panel" style={{ background: '#1e293b', padding: '0.5rem', border: 'none', color: 'white' }}>
-                        {Array.from({ length: 12 }, (_, i) => <option key={i+1} value={i+1}>{new Date(2000, i).toLocaleString('default', { month: 'long' })}</option>)}
+                        {Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={i + 1}>{new Date(2000, i).toLocaleString('default', { month: 'long' })}</option>)}
                     </select>
                 </div>
             </div>
@@ -90,20 +90,20 @@ export default function SettlementsManager({ tenantId }: { tenantId: string | nu
                                 <tr key={b.id} style={{ borderTop: '1px solid var(--glass-border)', fontSize: '0.85rem' }}>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ fontWeight: 700 }}>{new Date(b.createdAt).toLocaleDateString()}</div>
-                                        <div style={{ fontSize: '0.65rem', opacity: 0.5 }}>ID: {b.id.slice(0,8)}</div>
+                                        <div style={{ fontSize: '0.65rem', opacity: 0.5 }}>ID: {b.id.slice(0, 8)}</div>
                                     </td>
-                                    <td style={{ padding: '1rem' }}>{b.entityId.slice(0,8)}...</td>
+                                    <td style={{ padding: '1rem' }}>{b.entityId.slice(0, 8)}...</td>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ fontSize: '0.75rem' }}>{new Date(b.periodStart).toLocaleDateString()} - {new Date(b.periodEnd).toLocaleDateString()}</div>
                                     </td>
                                     <td style={{ padding: '1rem', fontWeight: 900 }}>${Number(b.totalNet).toLocaleString()}</td>
                                     <td style={{ padding: '1rem' }}>
-                                        <div style={{ 
-                                            display: 'inline-flex', 
-                                            alignItems: 'center', 
+                                        <div style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
                                             gap: '0.4rem',
-                                            padding: '0.2rem 0.6rem', 
-                                            borderRadius: '4px', 
+                                            padding: '0.2rem 0.6rem',
+                                            borderRadius: '4px',
                                             background: b.status === 'PAID' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)',
                                             color: b.status === 'PAID' ? '#4ade80' : '#fbbf24',
                                             fontSize: '0.65rem',

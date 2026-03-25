@@ -1,4 +1,4 @@
-import { Truck, Plus, Edit2, FileUp, Loader2, Download, AlertCircle, X, Search, Calendar, Shield, Gauge, Save, ArrowRight, History } from 'lucide-react';
+import { Truck, Plus, Edit2, FileUp, Download, X, Search, Shield, Gauge, Save, ArrowRight, History } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNotification } from '../App';
