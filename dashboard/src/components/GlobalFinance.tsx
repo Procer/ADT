@@ -47,7 +47,7 @@ export default function GlobalFinance({ onSelectTenant }: { onSelectTenant: (id:
             const res = await axios.get(`${API_BASE_URL}/management/tenants/${tenantId}/pending-trips`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setPendingTrips(res.data);
+            setPendingTrips(Array.isArray(res.data) ? res.data : []);
             setSelectedTripIds([]);
             setPaymentData(prev => ({ ...prev, monto: 0 }));
         } catch (err) {

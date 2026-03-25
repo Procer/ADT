@@ -49,7 +49,8 @@ export default function Finanzas({ tenantId }: { tenantId: string | null }) {
                     })
                 ]);
 
-                const totalPaid = paymentsRes.data.reduce((s: number, p: any) => s + Number(p.monto), 0);
+                const rawPayments = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
+                const totalPaid = rawPayments.reduce((s: number, p: any) => s + Number(p.monto), 0);
 
                 setBalance({
                     ...financeRes.data,
