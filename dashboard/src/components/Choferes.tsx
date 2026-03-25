@@ -1,4 +1,4 @@
-import { UserPlus, User, Phone, AlertCircle, Edit2, FileUp, Loader2, Download, TrendingUp, BadgeDollarSign, Search, Plus, X, Save, ArrowRight } from 'lucide-react';
+import { User, Phone, AlertCircle, Edit2, FileUp, Download, TrendingUp, BadgeDollarSign, Search, Plus, X, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import PricingManager from './PricingManager';
@@ -13,11 +13,11 @@ export default function Choferes({ tenantId }: { tenantId: string | null }) {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
-    const [tenants, setTenants] = useState<any[]>([]);
+    const [_tenants, setTenants] = useState<any[]>([]);
     const [selectedTenant, setSelectedTenant] = useState(tenantId || '');
     const [isImporting, setIsImporting] = useState(false);
     const [showImportWizard, setShowImportWizard] = useState(false);
-    const [importResult, setImportResult] = useState<{ success: number; errors: string[] } | null>(null);
+    const [_importResult, setImportResult] = useState<{ success: number; errors: string[] } | null>(null);
     const [showPricing, setShowPricing] = useState<{ id: string, name: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);

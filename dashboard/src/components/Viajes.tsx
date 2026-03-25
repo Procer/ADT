@@ -1,4 +1,4 @@
-import { Search, Plus, Filter, Navigation, X, Layers, User, Truck, MapPin, Package, ArrowRight, Save, Receipt, Calendar, Clock, Map as MapIcon, XCircle, Gauge, Weight, Loader2 } from 'lucide-react';
+import { Search, Plus, Navigation, X, Layers, User, MapPin, Package, ArrowRight, Save, Clock, Map as MapIcon, XCircle, Gauge, Weight, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import VisualHelpCard from './common/VisualHelpCard';
@@ -24,7 +24,7 @@ const getStatusStyle = (status: string) => {
 export default function Viajes({ tenantId }: { tenantId: string | null }) {
     const { notify } = useNotification();
     const [trips, setTrips] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [_loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [formTab, setFormTab] = useState<'logistica' | 'carga'>('logistica');
     const [selectedTripId, setSelectedTripId] = useState<string | null>(null);

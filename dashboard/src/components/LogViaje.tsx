@@ -27,7 +27,7 @@ export default function LogViaje({ tripId, onClose }: { tripId: string; onClose:
         fetchHistory();
     }, [tripId]);
 
-    const getIcon = (tipo: string, esManual?: boolean) => {
+    const getIcon = (tipo: string, _accion?: string, esManual?: boolean) => {
         if (tipo === 'TRIP_CREATED') return <Info size={16} color="var(--accent-blue)" />;
         if (tipo === 'HITO_ADMIN') return <User size={16} color="#fbbf24" />;
         if (esManual || tipo === 'HITO_CHOFER') return <CheckCircle size={16} color="#4ade80" />;
@@ -38,11 +38,11 @@ export default function LogViaje({ tripId, onClose }: { tripId: string; onClose:
     const formatTime = (dateStr: string) => {
         if (!dateStr) return '--:--';
         const date = new Date(dateStr);
-        return date.toLocaleTimeString('es-AR', { 
-            hour: '2-digit', 
-            minute: '2-digit', 
+        return date.toLocaleTimeString('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit',
             second: '2-digit',
-            hour12: false 
+            hour12: false
         });
     };
 
@@ -66,7 +66,7 @@ export default function LogViaje({ tripId, onClose }: { tripId: string; onClose:
                             const esHitoAdmin = event.tipo === 'HITO_ADMIN';
                             const esAutoGps = event.tipo === 'AUTO_GPS';
                             const esCreacion = event.tipo === 'TRIP_CREATED';
-                            
+
                             return (
                                 <div key={index} style={{ display: 'flex', gap: '1.5rem', position: 'relative', paddingBottom: '2rem' }}>
                                     {/* Timeline Line */}
@@ -74,14 +74,14 @@ export default function LogViaje({ tripId, onClose }: { tripId: string; onClose:
                                         <div style={{ position: 'absolute', left: '15px', top: '30px', bottom: 0, width: '2px', background: esHitoManual ? 'rgba(74, 222, 128, 0.2)' : esHitoAdmin ? 'rgba(251, 191, 36, 0.2)' : 'rgba(255,255,255,0.05)' }}></div>
                                     )}
 
-                                    <div style={{ 
-                                        width: '32px', 
-                                        height: '32px', 
-                                        borderRadius: '10px', 
-                                        background: esHitoManual ? 'rgba(74, 222, 128, 0.1)' : esHitoAdmin ? 'rgba(251, 191, 36, 0.1)' : esCreacion ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255,255,255,0.03)', 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        justifyContent: 'center', 
+                                    <div style={{
+                                        width: '32px',
+                                        height: '32px',
+                                        borderRadius: '10px',
+                                        background: esHitoManual ? 'rgba(74, 222, 128, 0.1)' : esHitoAdmin ? 'rgba(251, 191, 36, 0.1)' : esCreacion ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255,255,255,0.03)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         zIndex: 1,
                                         border: esHitoManual ? '1px solid rgba(74, 222, 128, 0.2)' : esHitoAdmin ? '1px solid rgba(251, 191, 36, 0.2)' : esCreacion ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid transparent'
                                     }}>
@@ -90,26 +90,26 @@ export default function LogViaje({ tripId, onClose }: { tripId: string; onClose:
 
                                     <div style={{ flex: 1 }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                                            <div style={{ 
-                                                fontSize: '0.7rem', 
-                                                fontWeight: 900, 
+                                            <div style={{
+                                                fontSize: '0.7rem',
+                                                fontWeight: 900,
                                                 letterSpacing: '0.05em',
                                                 color: esHitoManual ? '#4ade80' : esHitoAdmin ? '#fbbf24' : esAutoGps ? 'rgba(255,255,255,0.3)' : 'var(--accent-blue)',
                                                 textTransform: 'uppercase'
                                             }}>
                                                 {esHitoManual ? '✓ ACCIÓN MANUAL DEL CHOFER' :
-                                                 esHitoAdmin ? '⚙️ ACCIÓN ADMINISTRATIVA' :
-                                                 esAutoGps ? '📡 SEGUIMIENTO AUTOMÁTICO GPS' :
-                                                 esCreacion ? '🆕 CREACIÓN DEL VIAJE' :
-                                                 '⚙️ EVENTO DE SISTEMA'}
+                                                    esHitoAdmin ? '⚙️ ACCIÓN ADMINISTRATIVA' :
+                                                        esAutoGps ? '📡 SEGUIMIENTO AUTOMÁTICO GPS' :
+                                                            esCreacion ? '🆕 CREACIÓN DEL VIAJE' :
+                                                                '⚙️ EVENTO DE SISTEMA'}
                                             </div>
                                             <div style={{ fontSize: '0.75rem', fontWeight: 600, opacity: 0.4 }}>
                                                 {formatTime(event.fecha)}
                                             </div>
                                         </div>
 
-                                        <div style={{ 
-                                            fontSize: '0.9rem', 
+                                        <div style={{
+                                            fontSize: '0.9rem',
                                             fontWeight: esHitoManual || esCreacion || esHitoAdmin ? 700 : 500,
                                             color: esHitoManual || esCreacion || esHitoAdmin ? 'white' : 'rgba(255,255,255,0.8)',
                                             padding: event.accion?.includes('ALERTA') || event.descripcion?.includes('ALERTA') ? '0.75rem 1rem' : '0',
@@ -125,9 +125,9 @@ export default function LogViaje({ tripId, onClose }: { tripId: string; onClose:
                                             )}
                                             <span style={{ color: (event.accion?.includes('ALERTA') || event.descripcion?.includes('ALERTA')) ? '#fda4af' : 'inherit' }}>
                                                 {esHitoManual ? (event.descripcion || 'Cambio de estado') :
-                                                 esHitoAdmin ? (event.descripcion || 'Acción administrativa') :
-                                                 esAutoGps ? 'Posición reportada correctamente' :
-                                                 (event.descripcion || event.accion)}
+                                                    esHitoAdmin ? (event.descripcion || 'Acción administrativa') :
+                                                        esAutoGps ? 'Posición reportada correctamente' :
+                                                            (event.descripcion || event.accion)}
                                             </span>
                                         </div>
 

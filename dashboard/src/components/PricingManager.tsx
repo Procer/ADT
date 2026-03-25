@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TrendingUp, Calculator, Save, X, AlertTriangle, CheckCircle2, ArrowRight, Trash2 } from 'lucide-react';
+import { TrendingUp, Calculator, Save, X, AlertTriangle, Trash2 } from 'lucide-react';
 import { useNotification } from '../App';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -46,13 +46,13 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
 
     const handleDeleteRule = async (id: string) => {
         if (!window.confirm('¿Desea eliminar este registro histórico de tarifa? Esta acción es irreversible.')) return;
-        
+
         try {
             const token = localStorage.getItem('admin_token');
             // Usamos la ruta única definitiva para evitar colisiones 404
             const url = `${API_BASE_URL}/management/force-delete-pricing/${id}?role=${userRole}`;
             console.log('Ejecutando borrado oficial a:', url);
-            
+
             await axios.delete(url, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -70,7 +70,7 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
             const token = localStorage.getItem('admin_token');
             // Usar el tenantId de la regla vigente si el prop llega como null/empty (caso SuperAdmin)
             const effectiveTenantId = tenantId || (rules.length > 0 ? rules[0].tenantId : null);
-            
+
             if (!effectiveTenantId) {
                 notify('No se pudo determinar la empresa para la simulación', 'error');
                 return;
@@ -120,8 +120,8 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
     return (
         <div className="modal-overlay">
             <div className="glass-panel modal-content" style={{ width: '600px', padding: '2.5rem' }}>
-                <button 
-                    onClick={onClose} 
+                <button
+                    onClick={onClose}
                     style={{ position: 'absolute', right: '1.5rem', top: '1.5rem', background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', cursor: 'pointer', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
                 >
                     <X size={24} />
@@ -171,11 +171,11 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
                                         </div>
                                     </div>
                                     {userRole === 'SUPER_ADMIN' && (
-                                        <button 
+                                        <button
                                             onClick={() => handleDeleteRule(r.id)}
                                             style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', padding: '0.2rem', marginLeft: '0.5rem', opacity: 0.6 }}
-                                            onMouseOver={e => e.currentTarget.style.opacity = 1}
-                                            onMouseOut={e => e.currentTarget.style.opacity = 0.6}
+                                            onMouseOver={e => e.currentTarget.style.opacity = "1"}
+                                            onMouseOut={e => e.currentTarget.style.opacity = "0.6"}
                                             title="Eliminar registro"
                                         >
                                             <Trash2 size={14} />
@@ -200,7 +200,7 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
 
                 {step === 'FORM' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        
+
                         {/* SECCIÓN 1: EL CIMIENTO (CÁLCULO BASE) */}
                         <div style={{ padding: '1.5rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -208,7 +208,7 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
                                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>1. Cálculo Base (El Cimiento)</h4>
                             </div>
                             <p style={{ fontSize: '0.75rem', opacity: 0.6, marginBottom: '1rem' }}>Define la unidad principal de cobro. Es el valor mínimo que se aplicará al viaje.</p>
-                            
+
                             <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1rem' }}>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.75rem', fontWeight: 700 }}>Método de Medición</label>
@@ -242,7 +242,7 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
                                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#f59e0b' }}>2. Ladrillos Lógicos (Extras Condicionales)</h4>
                             </div>
                             <p style={{ fontSize: '0.75rem', opacity: 0.6, marginBottom: '1rem' }}>Variables que suman dinero extra al cimiento si se cumplen condiciones operativas.</p>
-                            
+
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.75rem', fontWeight: 700 }}>Plus por Hora de Espera</label>
@@ -271,8 +271,8 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
 
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button type="button" onClick={onClose} className="btn-secondary" style={{ flex: 1, padding: '1rem', fontWeight: 800 }}>CERRAR SIN CAMBIOS</button>
-                            <button 
-                                className="btn-primary" 
+                            <button
+                                className="btn-primary"
                                 disabled={loading}
                                 onClick={handleSimulate}
                                 style={{ flex: 2, padding: '1rem', fontWeight: 800, fontSize: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem' }}
@@ -285,7 +285,7 @@ export default function PricingManager({ tenantId, entityId, entityName, entityT
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                         <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid var(--accent-blue)', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
                             <div style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent-blue)', textTransform: 'uppercase' }}>Protocolo de Doble Chequeo</div>
-                            
+
                             {simulation?.viajesAnalizados > 0 ? (
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                     <div>

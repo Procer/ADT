@@ -8,6 +8,7 @@ interface VisualHelpCardProps {
     steps?: string[];
     tips?: string[];
     concepts?: { term: string; explanation: string }[];
+    onStartTour?: () => void;
 }
 
 export default function VisualHelpCard({
@@ -17,6 +18,7 @@ export default function VisualHelpCard({
     steps = [],
     tips = [],
     concepts = [],
+    onStartTour,
 }: VisualHelpCardProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -80,6 +82,27 @@ export default function VisualHelpCard({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {isExpanded && onStartTour && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onStartTour(); }}
+                            className="btn-primary tour-btn"
+                            style={{
+                                padding: '0.4rem 0.8rem',
+                                fontSize: '0.7rem',
+                                borderRadius: '8px',
+                                background: '#3b82f6',
+                                fontWeight: 900,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                border: 'none',
+                                color: 'white',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            <Lightbulb size={12} /> INICIAR TOUR
+                        </button>
+                    )}
                     {isExpanded ? <ChevronUp size={18} opacity={0.5} /> : <ChevronDown size={14} opacity={0.4} />}
                     <button
                         onClick={(e) => { e.stopPropagation(); handleDismiss(); }}
