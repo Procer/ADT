@@ -37,7 +37,7 @@ export default function AuditoriaCreditos({ tenantId }: { tenantId: string | nul
             const clientsRes = await axios.get(`${API_BASE_URL}/management/clients?tenantId=${tenantId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setClients(clientsRes.data);
+            setClients(Array.isArray(clientsRes.data) ? clientsRes.data : []);
 
             // Fetch billing audit data
             const res = await axios.get(`${API_BASE_URL}/management/billing-audit?tenantId=${tenantId}`, {
@@ -45,7 +45,7 @@ export default function AuditoriaCreditos({ tenantId }: { tenantId: string | nul
             });
 
             // Map and filter data
-            if (res.data && res.data.detalles) {
+            if (res.data && Array.isArray(res.data.detalles)) {
                 setCredits(res.data.detalles);
             } else {
                 setCredits([]);

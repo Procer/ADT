@@ -18,7 +18,7 @@ export default function CollectionsManager({ tenantId }: { tenantId: string | nu
             const res = await axios.get(`${API_BASE_URL}/management/credits/history?tenantId=${tenantId || ''}&month=${month}&year=${year}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setCollections(res.data);
+            setCollections(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error('Error fetching collections', err);
         } finally {

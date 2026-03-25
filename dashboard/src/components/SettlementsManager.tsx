@@ -19,7 +19,7 @@ export default function SettlementsManager({ tenantId }: { tenantId: string | nu
             const res = await axios.get(`${API_BASE_URL}/management/finance/settlements-v2?tenantId=${tenantId}&entityType=CHOFER&month=${month}&year=${year}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setBatches(res.data.items);
+            setBatches(Array.isArray(res.data?.items) ? res.data.items : []);
             setStats(res.data.stats);
         } catch (err) {
             console.error('Error fetching settlements', err);
