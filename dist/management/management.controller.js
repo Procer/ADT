@@ -81,6 +81,9 @@ const email_ingestion_log_entity_1 = require("../database/entities/email-ingesti
 const app_log_entity_1 = require("../database/entities/app-log.entity");
 const public_decorator_1 = require("../auth/public.decorator");
 const bcrypt = __importStar(require("bcrypt"));
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const os = __importStar(require("os"));
 let ManagementController = class ManagementController {
     tripsRepo;
     gpsRepo;
@@ -954,6 +957,47 @@ let ManagementController = class ManagementController {
     async getSystemLogs() {
         return this.getPwaLogs();
     }
+    async getServerPm2Logs(type = 'error', role) {
+        if (role !== 'SUPER_ADMIN')
+            throw new common_1.BadRequestException('Acceso denegado');
+        const logFileName = type === 'error' ? 'sistema-adt-error.log' : 'sistema-adt-out.log';
+        const paths = [
+            path.join('/root', '.pm2', 'logs', logFileName),
+            path.join(os.homedir(), '.pm2', 'logs', logFileName)
+        ];
+        let logContent = '';
+        let foundPath = '';
+        for (const p of paths) {
+            if (fs.existsSync(p)) {
+                foundPath = p;
+                try {
+                    const stats = fs.statSync(p);
+                    const start = Math.max(0, stats.size - (50 * 1024));
+                    const buffer = Buffer.alloc(stats.size - start);
+                    const fd = fs.openSync(p, 'r');
+                    fs.readSync(fd, buffer, 0, buffer.length, start);
+                    fs.closeSync(fd);
+                    logContent = buffer.toString('utf8');
+                    break;
+                }
+                catch (e) {
+                    console.error(`Error leyendo log: ${p}`, e);
+                }
+            }
+        }
+        if (!logContent) {
+            return {
+                content: `No se encontró el archivo de log en las rutas escaneadas.\nRuta intentada: ${paths.join(' o ')}`,
+                path: paths[0],
+                timestamp: new Date().toISOString()
+            };
+        }
+        return {
+            content: logContent,
+            path: foundPath,
+            timestamp: new Date().toISOString()
+        };
+    }
 };
 exports.ManagementController = ManagementController;
 __decorate([
@@ -1373,6 +1417,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ManagementController.prototype, "getSystemLogs", null);
+__decorate([
+    (0, common_1.Get)('server-pm2-logs'),
+    __param(0, (0, common_1.Query)('type')),
+    __param(1, (0, common_1.Query)('role')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "getServerPm2Logs", null);
 exports.ManagementController = ManagementController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('management'),

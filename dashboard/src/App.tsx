@@ -127,6 +127,7 @@ import ClientPortal from './components/ClientPortal';
 import FinalClients from './components/FinalClients';
 import LogVisor from './components/LogVisor';
 import AppLogs from './components/AppLogs';
+import ServerPm2Logs from './components/ServerPm2Logs';
 import SolicitudesEntrantes from './components/SolicitudesEntrantes';
 import Finance360ToCollect from './components/Finance360ToCollect';
 import Finance360Settlements from './components/Finance360Settlements';
@@ -337,6 +338,9 @@ function AppContent({
                   <NavLink to="/app-logs" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                     <ActivityIcon size={18} /> <span>Errores de Apps</span>
                   </NavLink>
+                  <NavLink to="/server-logs" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                    <Terminal size={18} /> <span>Logs del Servidor</span>
+                  </NavLink>
                 </div>
               )}
             </>
@@ -463,6 +467,7 @@ function AppContent({
           <Route path="/mis-clientes" element={<FinalClients tenantId={effectiveTenantId} />} />
           <Route path="/system-logs" element={<LogVisor />} />
           <Route path="/app-logs" element={<AppLogs />} />
+          <Route path="/server-logs" element={<ServerPm2Logs />} />
           <Route path="/client-portal" element={<ClientPortal clientId={currentUser?.clientId} />} />
           <Route path="/config" element={<Configuracion tenantId={effectiveTenantId} />} />
           <Route path="/global-config" element={<GlobalConfig />} />

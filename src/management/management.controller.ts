@@ -36,6 +36,7 @@ import { Public } from '../auth/public.decorator';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 @UseGuards(JwtAuthGuard)
 @Controller('management')
@@ -1180,5 +1181,57 @@ export class ManagementController {
     async getSystemLogs() {
         // Alias para pwa-logs si el frontend lo pide como logs
         return this.getPwaLogs();
+    }
+
+    @Get('server-pm2-logs')
+    async getServerPm2Logs(@Query('type') type: 'error' | 'out' = 'error', @Query('role') role: string) {
+        // Validación de seguridad simple basada en el patrón actual del proyecto
+        if (role !== 'SUPER_ADMIN') throw new BadRequestException('Acceso denegado');
+
+        // Intentamos detectar la ruta de PM2 basándonos en el sistema operativo
+        // En el log previo vimos que es: /root/.pm2/logs/sistema-adt-error.log
+        const logFileName = type === 'error' ? 'sistema-adt-error.log' : 'sistema-adt-out.log';
+
+        // Rutas candidatas para el VPS (root o home del usuario)
+        const paths = [
+            path.join('/root', '.pm2', 'logs', logFileName),
+            path.join(os.homedir(), '.pm2', 'logs', logFileName)
+        ];
+
+        let logContent = '';
+        let foundPath = '';
+
+        for (const p of paths) {
+            if (fs.existsSync(p)) {
+                foundPath = p;
+                try {
+                    // Leemos los últimos 50KB para no saturar la memoria
+                    const stats = fs.statSync(p);
+                    const start = Math.max(0, stats.size - (50 * 1024)); // Últimos 50KB
+                    const buffer = Buffer.alloc(stats.size - start);
+                    const fd = fs.openSync(p, 'r');
+                    fs.readSync(fd, buffer, 0, buffer.length, start);
+                    fs.closeSync(fd);
+                    logContent = buffer.toString('utf8');
+                    break;
+                } catch (e) {
+                    console.error(`Error leyendo log: ${p}`, e);
+                }
+            }
+        }
+
+        if (!logContent) {
+            return {
+                content: `No se encontró el archivo de log en las rutas escaneadas.\nRuta intentada: ${paths.join(' o ')}`,
+                path: paths[0],
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        return {
+            content: logContent,
+            path: foundPath,
+            timestamp: new Date().toISOString()
+        };
     }
 }

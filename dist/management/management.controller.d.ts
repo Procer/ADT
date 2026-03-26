@@ -274,4 +274,9 @@ export declare class ManagementController {
     getPwaLogs(): Promise<AppLog[]>;
     getAudits(tenantId: string): Promise<AuditLog[]>;
     getSystemLogs(): Promise<AppLog[]>;
+    getServerPm2Logs(type: "error" | "out" | undefined, role: string): Promise<{
+        content: string;
+        path: string;
+        timestamp: string;
+    }>;
 }
