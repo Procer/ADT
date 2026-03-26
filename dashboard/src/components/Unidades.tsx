@@ -141,8 +141,14 @@ export default function Unidades({ tenantId }: { tenantId: string | null }) {
         }
 
         try {
+            // Función auxiliar para convertir "" en null (SQL Server falla con "" en DATE)
+            const cleanDate = (d: string) => (d && d.trim() !== "") ? d : null;
+
             const unitData = {
                 ...newUnit,
+                vencimientoVTV: cleanDate(newUnit.vencimientoVTV),
+                vencimientoSeguro: cleanDate(newUnit.vencimientoSeguro),
+                vencimientoRuta: cleanDate(newUnit.vencimientoRuta),
                 kmInicial: Number(newUnit.kmInicial || 0),
                 odometroActual: Number(newUnit.odometroActual || newUnit.kmInicial || 0)
             };
