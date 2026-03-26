@@ -13,8 +13,8 @@ export default defineConfig({
             filename: 'sw.ts',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
             manifest: {
-                name: 'ADT Chofer',
-                short_name: 'ADT',
+                name: 'ANKA Chofer',
+                short_name: 'ANKA',
                 description: 'Asistente Digital de Transporte - Chofer',
                 theme_color: '#0a0a0b',
                 background_color: '#0a0a0b',
@@ -22,15 +22,15 @@ export default defineConfig({
                 orientation: 'portrait',
                 icons: [
                     {
-                        src: 'vite.svg',
-                        sizes: 'any',
-                        type: 'image/svg+xml',
+                        src: 'pwa-icon.png',
+                        sizes: '512x512',
+                        type: 'image/png',
                         purpose: 'any'
                     },
                     {
-                        src: 'vite.svg',
-                        sizes: 'any',
-                        type: 'image/svg+xml',
+                        src: 'pwa-icon.png',
+                        sizes: '512x512',
+                        type: 'image/png',
                         purpose: 'maskable'
                     }
                 ]
