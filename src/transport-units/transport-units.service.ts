@@ -12,7 +12,20 @@ export class TransportUnitsService {
     ) { }
 
     create(createUnitDto: CreateTransportUnitDto) {
-        const unit = this.unitsRepo.create(createUnitDto);
+        // Sanitizar fechas inválidas antes del Repo.create/save para evitar 500 de TypeORM
+        const sanitizedData = { ...createUnitDto };
+
+        const dateFields = ['vencimientoVTV', 'vencimientoSeguro', 'vencimientoRuta'] as const;
+        dateFields.forEach(field => {
+            const val = (sanitizedData as any)[field];
+            if (val instanceof Date && isNaN(val.getTime())) {
+                (sanitizedData as any)[field] = null;
+            } else if (typeof val === 'string' && val.trim() === '') {
+                (sanitizedData as any)[field] = null;
+            }
+        });
+
+        const unit = this.unitsRepo.create(sanitizedData as any);
         return this.unitsRepo.save(unit);
     }
 
@@ -35,7 +48,7 @@ export class TransportUnitsService {
 
     private parseExcelDate(value: any): Date | undefined {
         if (!value) return undefined;
-        
+
         // 1. Si ya es un objeto Date de JS
         if (value instanceof Date && !isNaN(value.getTime())) return value;
 
@@ -48,7 +61,7 @@ export class TransportUnitsService {
 
         // 3. Si es un string, intentamos procesar formatos comunes
         const str = String(value).trim();
-        
+
         // Formato DD-MM-YYYY o DD/MM/YYYY
         const dmyMatch = str.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
         if (dmyMatch) {
@@ -84,7 +97,7 @@ export class TransportUnitsService {
                 const marca = r.marca || r.Marca;
                 const modelo = r.modelo || r.Modelo;
                 const anio = r.anio || r.Anio || r['Año'];
-                
+
                 if (!patente) {
                     errors.push(`Fila ${index + 2}: Falta la Patente`);
                     continue;

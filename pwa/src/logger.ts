@@ -1,12 +1,12 @@
 import axios from 'axios';
+import { API_BASE_URL } from './config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export const logToBackend = async (level: 'INFO' | 'ERROR', message: string, context: any = {}) => {
     try {
         const driverData = JSON.parse(localStorage.getItem('trip-store') || '{}');
         const driverId = driverData?.state?.user?.id || 'Unknown';
-        
+
         await axios.post(`${API_BASE_URL}/management/pwa-logs`, {
             level,
             message,
@@ -38,7 +38,7 @@ export const initGlobalErrorHandlers = () => {
             reason: event.reason?.stack || event.reason
         });
     };
-    
+
     // Log inicial de sesión
     logToBackend('INFO', 'Aplicación PWA Iniciada');
 };

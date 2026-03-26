@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useTripStore } from '../store/useTripStore';
 import { LogIn, AlertCircle } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export const Login: React.FC = () => {
     const [dni, setDni] = useState('');

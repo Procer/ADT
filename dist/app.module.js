@@ -118,7 +118,7 @@ exports.AppModule = AppModule = __decorate([
                     app_log_entity_1.AppLog
                 ],
                 synchronize: false,
-                logging: true,
+                logging: ['error', 'warn'],
                 options: {
                     encrypt: true,
                     trustServerCertificate: true,

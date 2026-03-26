@@ -271,9 +271,22 @@ export declare class ManagementController {
         userInput: string;
         tenantId: string;
     }, req: any): Promise<any>;
-    getPwaLogs(): Promise<AppLog[]>;
+    getPwaLogs(): Promise<{
+        timestamp: Date;
+        level: import("../database/entities/app-log.entity").LogLevel;
+        driverId: string | null;
+        message: string;
+        context: any;
+    }[]>;
+    createPwaLog(body: any): Promise<AppLog>;
     getAudits(tenantId: string): Promise<AuditLog[]>;
-    getSystemLogs(): Promise<AppLog[]>;
+    getSystemLogs(): Promise<{
+        timestamp: Date;
+        level: import("../database/entities/app-log.entity").LogLevel;
+        driverId: string | null;
+        message: string;
+        context: any;
+    }[]>;
     getServerPm2Logs(type: "error" | "out" | undefined, role: string): Promise<{
         content: string;
         path: string;

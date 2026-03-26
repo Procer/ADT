@@ -1161,10 +1161,39 @@ export class ManagementController {
 
     @Get('pwa-logs')
     async getPwaLogs() {
-        return this.dataSource.getRepository(AppLog).find({
+        const logs = await this.dataSource.getRepository(AppLog).find({
             order: { timestamp: 'DESC' },
             take: 100
         });
+
+        return logs.map(log => ({
+            timestamp: log.timestamp,
+            level: log.level,
+            driverId: log.userId,
+            message: log.mensaje,
+            context: log.metadata ? (() => {
+                try {
+                    return JSON.parse(log.metadata);
+                } catch (e) {
+                    return { raw: log.metadata };
+                }
+            })() : null
+        }));
+    }
+
+    @Public()
+    @Post('pwa-logs')
+    async createPwaLog(@Body() body: any) {
+        const repo = this.dataSource.getRepository(AppLog);
+        const log = repo.create({
+            level: body.level || 'INFO',
+            mensaje: body.message,
+            userId: body.driverId,
+            metadata: JSON.stringify(body.context || {}),
+            contexto: 'PWA_DRIVER',
+            timestamp: new Date()
+        });
+        return repo.save(log);
     }
 
     @Get('audits')

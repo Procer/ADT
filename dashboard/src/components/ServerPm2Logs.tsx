@@ -38,6 +38,12 @@ export default function ServerPm2Logs() {
         return () => clearInterval(interval);
     }, [type]);
 
+    const stripAnsi = (str: string) => {
+        if (!str) return '';
+        // Regex para eliminar secuencias de escape ANSI (colores, estilos, etc)
+        return str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+    };
+
     return (
         <div style={{ padding: '2rem', height: 'calc(100vh - 100px)', display: 'flex', flexDirection: 'column' }}>
             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -95,7 +101,7 @@ export default function ServerPm2Logs() {
                 {loading && !logData ? (
                     <div style={{ color: '#aaa' }}>Conectando con el servidor PM2...</div>
                 ) : (
-                    logData?.content || 'El archivo de log está vacío.'
+                    stripAnsi(logData?.content) || 'El archivo de log está vacío.'
                 )}
             </div>
 

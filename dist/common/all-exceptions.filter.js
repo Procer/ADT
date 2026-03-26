@@ -29,7 +29,11 @@ let AllExceptionsFilter = class AllExceptionsFilter {
         const message = exception instanceof common_1.HttpException
             ? exception.getResponse()
             : exception.message || 'Internal server error';
-        this.logger.error(`[ERROR ${status}] ${request.method} ${request.url}: ${JSON.stringify(message)}`);
+        this.logger.error(`🛑 [ERROR ${status}] ${request.method} ${request.url}`);
+        if (status >= 500) {
+            this.logger.error(`Mensaje: ${JSON.stringify(message)}`);
+            this.logger.error(`Body: ${JSON.stringify(request.body)}`);
+        }
         try {
             const queryRunner = this.dataSource.createQueryRunner();
             await queryRunner.connect();

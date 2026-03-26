@@ -10,8 +10,7 @@ import imageCompression from 'browser-image-compression';
 import axios from 'axios';
 import { Login } from './Login';
 import { logToBackend } from '../logger';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+import { API_BASE_URL } from '../config';
 
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371e3;

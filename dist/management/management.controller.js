@@ -940,10 +940,36 @@ let ManagementController = class ManagementController {
         return await this.aiExtractorService.processFinanceCopilot(userInput, context, tenant.geminiApiKey);
     }
     async getPwaLogs() {
-        return this.dataSource.getRepository(app_log_entity_1.AppLog).find({
+        const logs = await this.dataSource.getRepository(app_log_entity_1.AppLog).find({
             order: { timestamp: 'DESC' },
             take: 100
         });
+        return logs.map(log => ({
+            timestamp: log.timestamp,
+            level: log.level,
+            driverId: log.userId,
+            message: log.mensaje,
+            context: log.metadata ? (() => {
+                try {
+                    return JSON.parse(log.metadata);
+                }
+                catch (e) {
+                    return { raw: log.metadata };
+                }
+            })() : null
+        }));
+    }
+    async createPwaLog(body) {
+        const repo = this.dataSource.getRepository(app_log_entity_1.AppLog);
+        const log = repo.create({
+            level: body.level || 'INFO',
+            mensaje: body.message,
+            userId: body.driverId,
+            metadata: JSON.stringify(body.context || {}),
+            contexto: 'PWA_DRIVER',
+            timestamp: new Date()
+        });
+        return repo.save(log);
     }
     async getAudits(tenantId) {
         if (!tenantId)
@@ -1404,6 +1430,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ManagementController.prototype, "getPwaLogs", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Post)('pwa-logs'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ManagementController.prototype, "createPwaLog", null);
 __decorate([
     (0, common_1.Get)('audits'),
     __param(0, (0, common_1.Query)('tenantId')),

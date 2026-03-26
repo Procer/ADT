@@ -23,7 +23,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
             : (exception as Error).message || 'Internal server error';
 
         // Log en Consola
-        this.logger.error(`[ERROR ${status}] ${request.method} ${request.url}: ${JSON.stringify(message)}`);
+        this.logger.error(`🛑 [ERROR ${status}] ${request.method} ${request.url}`);
+        if (status >= 500) {
+            this.logger.error(`Mensaje: ${JSON.stringify(message)}`);
+            this.logger.error(`Body: ${JSON.stringify(request.body)}`);
+        }
 
         // EXTRA CRÍTICO: Persistir en Base de Datos para el Super Admin
         try {

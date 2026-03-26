@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useTripStore } from '../store/useTripStore';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export function useSyncQueue() {
     const { syncQueue, removeFromSyncQueue, tripId, token } = useTripStore();
@@ -17,7 +17,7 @@ export function useSyncQueue() {
 
             // Procesar una copia local para evitar interferencias con el estado de Zustand durante el loop
             const queueSnapshot = [...syncQueue];
-            
+
             // Configurar headers si hay token
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
@@ -41,7 +41,7 @@ export function useSyncQueue() {
                     } else if (event.type.startsWith('STATUS_CHANGE_')) {
                         const newStatus = event.type.replace('STATUS_CHANGE_', '');
                         endpoint = `${API_BASE_URL}/trips/${tripId}/status`;
-                        
+
                         // Mapeo dinámico para compatibilidad backend (Spanish)
                         const mappedStatus = newStatus === 'PENDING' ? 'PENDIENTE' : newStatus;
 
@@ -80,7 +80,7 @@ export function useSyncQueue() {
                     }
                 } catch (error: any) {
                     // Si hay error de red o de auth (401), detenemos el procesamiento de la cola
-                    break; 
+                    break;
                 }
             }
             isSyncing.current = false;

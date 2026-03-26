@@ -4,7 +4,7 @@ import { CreateTransportUnitDto } from './dto/create-transport-unit.dto';
 export declare class TransportUnitsService {
     private unitsRepo;
     constructor(unitsRepo: Repository<TransportUnit>);
-    create(createUnitDto: CreateTransportUnitDto): Promise<TransportUnit>;
+    create(createUnitDto: CreateTransportUnitDto): Promise<TransportUnit[]>;
     findAll(tenantId: string): Promise<TransportUnit[]>;
     findAllAdmin(): Promise<TransportUnit[]>;
     findOne(id: string): Promise<TransportUnit | null>;

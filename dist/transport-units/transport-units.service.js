@@ -23,7 +23,18 @@ let TransportUnitsService = class TransportUnitsService {
         this.unitsRepo = unitsRepo;
     }
     create(createUnitDto) {
-        const unit = this.unitsRepo.create(createUnitDto);
+        const sanitizedData = { ...createUnitDto };
+        const dateFields = ['vencimientoVTV', 'vencimientoSeguro', 'vencimientoRuta'];
+        dateFields.forEach(field => {
+            const val = sanitizedData[field];
+            if (val instanceof Date && isNaN(val.getTime())) {
+                sanitizedData[field] = null;
+            }
+            else if (typeof val === 'string' && val.trim() === '') {
+                sanitizedData[field] = null;
+            }
+        });
+        const unit = this.unitsRepo.create(sanitizedData);
         return this.unitsRepo.save(unit);
     }
     findAll(tenantId) {

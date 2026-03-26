@@ -76,7 +76,7 @@ import { AppLog } from './database/entities/app-log.entity';
         AppLog
       ],
       synchronize: false,
-      logging: true,
+      logging: ['error', 'warn'],
       options: {
         encrypt: true,
         trustServerCertificate: true,
