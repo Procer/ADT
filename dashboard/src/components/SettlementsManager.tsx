@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../config';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Truck, CheckCircle, Clock, FileText } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function SettlementsManager({ tenantId }: { tenantId: string | null }) {
     const [batches, setBatches] = useState<any[]>([]);

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import VisualHelpCard from './common/VisualHelpCard';
@@ -8,7 +9,7 @@ import {
 } from 'lucide-react';
 import VisualTourOverlay from './common/VisualTourOverlay';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 interface ClientGroup {
     clientName: string;

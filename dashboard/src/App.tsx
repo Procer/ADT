@@ -4,6 +4,7 @@ import { LayoutDashboard, Truck, ShieldCheck, LogOut, CreditCard, ActivityIcon, 
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import './App.css';
+import { API_BASE_URL } from './config';
 
 // Notification Context
 const NotificationContext = createContext<any>(null);
@@ -133,7 +134,7 @@ import Finance360ToCollect from './components/Finance360ToCollect';
 import Finance360Settlements from './components/Finance360Settlements';
 // import AiChatCopilot from './components/AiChatCopilot';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 import { useNavigate } from 'react-router-dom';
 

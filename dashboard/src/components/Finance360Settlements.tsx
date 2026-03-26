@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../config';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import VisualHelpCard from './common/VisualHelpCard';
 import { Truck, Plus, Minus, RefreshCw, FileText, Download, User, Calendar } from 'lucide-react';
 import VisualTourOverlay from './common/VisualTourOverlay';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function Finance360Settlements({ tenantId }: { tenantId: string | null }) {
     const [drivers, setDrivers] = useState<any[]>([]);

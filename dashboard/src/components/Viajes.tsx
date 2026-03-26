@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import { Search, Plus, Navigation, X, Layers, User, MapPin, Package, ArrowRight, Save, Clock, Map as MapIcon, XCircle, Gauge, Weight, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -6,7 +7,7 @@ import VisualTourOverlay from './common/VisualTourOverlay';
 import LogViaje from './LogViaje';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 const getStatusStyle = (status: string) => {
     switch (status) {

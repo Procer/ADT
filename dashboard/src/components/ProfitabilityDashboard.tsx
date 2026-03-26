@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../config';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart3, TrendingUp, Download, Users } from 'lucide-react';
 import VisualHelpCard from './common/VisualHelpCard';
 import VisualTourOverlay from './common/VisualTourOverlay';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function ProfitabilityDashboard({ tenantId }: { tenantId: string | null }) {
     const [stats, setStats] = useState<any>(null);

@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { Settings, Mail, Cpu, Save, ShieldCheck, Info, ExternalLink, Inbox } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Configuracion({ tenantId }: { tenantId: string | null }) {
     const { notify } = useNotification();

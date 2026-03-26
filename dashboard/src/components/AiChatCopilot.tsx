@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Bot, Send, X, Minimize2, Maximize2, TrendingUp, Sparkles } from 'lucide-react';
 import VisualHelpCard from './common/VisualHelpCard';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function AiChatCopilot({ tenantId }: { tenantId: string }) {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { Clock, MapPin, User, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import MapModal from './MapModal';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function LogViaje({ tripId, onClose }: { tripId: string; onClose: () => void }) {
     const [history, setHistory] = useState<any[]>([]);

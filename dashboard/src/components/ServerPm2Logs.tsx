@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../config';
 import { Terminal, RefreshCcw } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function ServerPm2Logs() {
     const [logData, setLogData] = useState<any>(null);

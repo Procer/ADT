@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { Activity, CheckCircle, AlertTriangle, MessageSquare, ShieldAlert, Clock, Map as MapIcon, ChevronRight, User, Truck, Navigation } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import MapModal from './MapModal';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function Alertas({ tenantId }: { tenantId: string | null }) {
     const [alertas, setAlertas] = useState<any[]>([]);

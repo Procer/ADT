@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { useState, useEffect, useRef } from 'react';
 import { MapPin, Clock, FileText, Activity, Box, ShieldCheck, Navigation, XCircle, CheckCircle, Filter, Search, Calendar, Anchor, RefreshCw, PlusCircle, Upload, Download, Loader2, Package, Layers } from 'lucide-react';
 import axios from 'axios';
 import MapModal from './MapModal';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 interface ClientPortalProps {
     clientId: string;

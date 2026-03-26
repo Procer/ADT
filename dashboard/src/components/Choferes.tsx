@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../config';
 import { User, Phone, AlertCircle, Edit2, FileUp, Download, TrendingUp, BadgeDollarSign, Search, Plus, X, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import PricingManager from './PricingManager';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Choferes({ tenantId }: { tenantId: string | null }) {
     const { notify } = useNotification();

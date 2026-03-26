@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { Building2, Plus, ExternalLink, Mail, LayoutList, Search, UserCheck, RefreshCw, Edit2, Trash2, Save, AlertTriangle, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Clientes({ onImpersonate }: { onImpersonate: (id: string) => void }) {
     const { notify } = useNotification();

@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { Truck, Plus, Edit2, FileUp, Download, X, Search, Shield, Gauge, Save, ArrowRight, History } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Unidades({ tenantId }: { tenantId: string | null }) {
     const { notify } = useNotification();

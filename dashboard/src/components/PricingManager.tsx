@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '../config';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { TrendingUp, Calculator, Save, X, AlertTriangle, Trash2 } from 'lucide-react';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 interface PricingManagerProps {
     tenantId: string;

@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../config';
 import { Building, Plus, Trash2, Mail, Key, Search, ShieldCheck, TrendingUp, X, Save, Building2, LayoutList, BadgeDollarSign, Edit2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PricingManager from './PricingManager';
 import { useNotification } from '../App';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function FinalClients({ tenantId }: { tenantId: string | null }) {
     const { notify } = useNotification();

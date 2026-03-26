@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../config';
 import { FileText, AlertTriangle, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Reportes({ tenantId }: { tenantId: string | null }) {
     const [units, setUnits] = useState<any[]>([]);

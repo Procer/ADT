@@ -1,8 +1,9 @@
+import { API_BASE_URL } from '../config';
 import { Calendar, CheckCircle2, List, TrendingUp, Search, Send } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function GlobalFinance({ onSelectTenant }: { onSelectTenant: (id: string, view: string) => void }) {
     const [data, setData] = useState<any[]>([]);

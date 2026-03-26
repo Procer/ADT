@@ -1,10 +1,11 @@
+import { API_BASE_URL } from '../config';
 import { CreditCard, Calendar, Search, Building } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import VisualHelpCard from './common/VisualHelpCard';
 import VisualTourOverlay from './common/VisualTourOverlay';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 
 export default function AuditoriaCreditos({ tenantId }: { tenantId: string | null }) {
     const [credits, setCredits] = useState<any[]>([]);

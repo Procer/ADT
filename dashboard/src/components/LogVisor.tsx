@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import { useState, useEffect, useMemo } from 'react';
 import {
     History, RefreshCcw, Search, 
@@ -7,7 +8,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 export default function LogVisor() {
     const [logs, setLogs] = useState<any[]>([]);
