@@ -1,0 +1,16 @@
+# Root .gitignore
+node_modules
+dist
+.env
+.env.*
+*.log
+ts-node
+tsconfig.build.tsbuildinfo
+.vscode
+.idea
+.DS_Store
+storage/
+pwa/dist
+dashboard/dist
+pwa/node_modules
+dashboard/node_modules

@@ -326,11 +326,6 @@ export const DriverApp: React.FC = () => {
         }
     };
 
-    const openNavigation = () => {
-        if (!destination) return;
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`;
-        window.open(url, '_blank');
-    };
 
     if (!token) return <Login />;
 
