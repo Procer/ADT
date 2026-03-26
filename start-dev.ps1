@@ -22,7 +22,7 @@ if (!$localIp) {
 }
 
 Write-Host "`n[!] IP REAL DETECTADA: $localIp" -ForegroundColor Magenta
-Write-Host "[!] Tu celular debe entrar a: http://$($localIp):5174" -ForegroundColor Magenta
+Write-Host "[!] Tu celular debe entrar a: http://$($localIp):5178" -ForegroundColor Magenta
 Write-Host "===============================================" -ForegroundColor Cyan
 
 # --- CONFIGURACIÓN DE ENTORNOS (.env) ---
@@ -116,8 +116,8 @@ if (Test-Path ".env") {
 }
 
 # --- LIMPIEZA DE PROCESOS ANTERIORES (Súrgica por puerto) ---
-Write-Host "[*] Limpiando puertos 3001, 5173, 5174 para evitar colisiones..." -ForegroundColor Gray
-$ports = @(3001, 5173, 5174)
+Write-Host "[*] Limpiando puertos 3001, 5177, 5178 para evitar colisiones..." -ForegroundColor Gray
+$ports = @(3001, 5173, 5174, 5177, 5178)
 foreach ($port in $ports) {
     $connections = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
     if ($connections) {
@@ -135,15 +135,15 @@ Start-Process powershell -ArgumentList "-NoExit", "-Command", "npm run start:dev
 Start-Sleep -Seconds 3
 
 Write-Host "[6/6] Lanzando Frontends (MODO RED EXTERNA)..." -ForegroundColor Yellow
-# Dashboard: Puerto 5173 con acceso externo
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd dashboard; npx vite --host --port 5173"
-# PWA Chofer: Puerto 5174 con acceso externo
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd pwa; npx vite --host --port 5174 --force"
+# Dashboard: Puerto 5177 con acceso externo
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd dashboard; npx vite --host --port 5177"
+# PWA Chofer: Puerto 5178 con acceso externo
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd pwa; npx vite --host --port 5178 --force"
 
 Write-Host "`n===============================================" -ForegroundColor Green
 Write-Host "   SISTEMA ADT EN MARCHA (VERSION CELULAR)" -ForegroundColor Green
 Write-Host "===============================================" -ForegroundColor Green
-Write-Host "Tu PC Dashboard: http://localhost:5173"
-Write-Host "Tu PC PWA Chofer: http://localhost:5174"
-Write-Host "TU CELULAR PWA: http://$($localIp):5174" -ForegroundColor Cyan
+Write-Host "Tu PC Dashboard: http://localhost:5177"
+Write-Host "Tu PC PWA Chofer: http://localhost:5178"
+Write-Host "TU CELULAR PWA: http://$($localIp):5178" -ForegroundColor Cyan
 Write-Host "===============================================" -ForegroundColor Green

@@ -397,137 +397,127 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                 </div>
             )}
 
-            {/* MODAL DESPACHO PREMIUM (IDENTICO A CHOFERES) */}
+            {/* SIDE DRAWER DESPACHO (ANTIGUO MODAL) */}
             {showModal && (
-                <div className="modal-overlay">
+                <div className="drawer-overlay" onClick={(e) => { if(e.target === e.currentTarget) setShowModal(false); }}>
                     <style>{`
-                            .modal-header-responsive { padding: 2.5rem 3rem; }
-                            .modal-body-responsive { padding: 3.5rem; }
-                            .modal-grid-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2.5rem; }
-                            @media (max-width: 768px) {
-                                .modal-header-responsive { padding: 1.5rem !important; }
-                                .modal-body-responsive { padding: 1.5rem !important; }
-                                .modal-grid-2 { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-                                .modal-header-logo { width: 48px !important; height: 48px !important; }
-                                .modal-header-logo svg { width: 20px !important; height: 20px !important; }
-                                .modal-header-title { fontSize: 1.25rem !important; }
-                                .form-tab-btn { padding: 1rem !important; font-size: 0.65rem !important; }
-                            }
-                        `}</style>
-                    <div className="modal-header-responsive" style={{ background: 'rgba(30, 41, 59, 0.98)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                            <div className="modal-header-logo" style={{ width: '64px', height: '64px', background: 'linear-gradient(135deg, #3b82f6, #6366f1)', borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.5)' }}>
-                                <Navigation size={32} color="white" />
+                        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 1100; display: flex; justify-content: flex-end; }
+                        .drawer-content { background: #1e293b; width: 100%; max-width: 600px; height: 100%; display: flex; flex-direction: column; border-left: 1px solid rgba(255,255,255,0.05); animation: slideIn 0.3s ease-out forwards; }
+                        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+                        .drawer-header { padding: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+                        .drawer-body { padding: 2.5rem; flex: 1; overflow-y: auto; }
+                        .drawer-footer { padding: 2rem; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); }
+                        .input-group label { display: flex; alignItems: center; gap: 8px; fontSize: 0.7rem; fontWeight: 800; opacity: 0.5; marginBottom: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+                        .form-input { width: 100%; padding: 1.1rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: white; borderRadius: 16px; outline: none; fontSize: 0.95rem; transition: all 0.2s; }
+                        .form-input:focus { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+                        
+                        @media (max-width: 768px) {
+                            .drawer-content { max-width: 100% !important; border-left: none !important; }
+                            .drawer-body { padding: 1.5rem !important; }
+                        }
+                    `}</style>
+                    <div className="drawer-content">
+                        <div className="drawer-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                                <div style={{ width: '52px', height: '52px', background: 'linear-gradient(135deg, #3b82f6, #6366f1)', borderRadius: '16px', display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 8px 16px -4px rgba(59, 130, 246, 0.4)' }}>
+                                    <Navigation size={24} color="white" />
+                                </div>
+                                <div>
+                                    <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white', margin: 0 }}>{confirmingTripId ? 'Asignar Chofer' : 'Nuevo Despacho'}</h2>
+                                    <p style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: '2px' }}>Complete los datos para iniciar el viaje.</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="modal-header-title" style={{ fontSize: '1.75rem', fontWeight: 900, color: 'white', letterSpacing: '-0.02em' }}>Despacho</h2>
-                                <p style={{ fontSize: '0.85rem', opacity: 0.5, marginTop: '0.2rem' }}>Inicie un nuevo seguimiento logístico.</p>
-                            </div>
+                            <button onClick={() => setShowModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', width: '38px', height: '38px', borderRadius: '50%', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', transition: 'all 0.2s' }}>
+                                <X size={20} />
+                            </button>
                         </div>
-                        <button onClick={() => setShowModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', width: '44px', height: '44px', borderRadius: '50%', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', transition: 'all 0.2s' }}>
-                            <X size={22} />
-                        </button>
-                    </div>
 
-                    <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', position: 'relative' }}>
-                        <div style={{ height: '100%', background: 'linear-gradient(90deg, #3b82f6, #6366f1)', width: formTab === 'logistica' ? '50%' : '100%', transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }} />
-                    </div>
-                    <div style={{ display: 'flex', background: 'rgba(255,255,255,0.01)' }}>
-                        <button type="button" onClick={() => setFormTab('logistica')} className={`form-tab-btn ${formTab === 'logistica' ? 'active' : ''}`}>
-                            <span style={{ marginRight: '8px', opacity: 0.5 }}>01</span> LOGÍSTICA
-                        </button>
-                        <button type="button" onClick={() => setFormTab('carga')} className={`form-tab-btn ${formTab === 'carga' ? 'active' : ''}`}>
-                            <span style={{ marginRight: '8px', opacity: 0.5 }}>02</span> CARGA Y DESTINO
-                        </button>
-                    </div>
+                        <div style={{ height: '3px', background: 'rgba(255,255,255,0.05)', position: 'relative' }}>
+                            <div style={{ height: '100%', background: 'linear-gradient(90deg, #3b82f6, #6366f1)', width: formTab === 'logistica' ? '50%' : '100%', transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }} />
+                        </div>
 
-                    <div className="modal-body-responsive">
-                        {formTab === 'logistica' ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                <div className="input-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, opacity: 0.5, marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                        <Layers size={14} color="#3b82f6" /> Dador de Carga
-                                    </label>
-                                    <select value={newTrip.clientId} onChange={e => setNewTrip({ ...newTrip, clientId: e.target.value })} style={{ width: '100%', padding: '1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', color: 'white', borderRadius: '18px', outline: 'none', fontSize: '1rem' }}>
-                                        <option value="" style={{ background: '#1e293b' }}>Seleccionar...</option>
-                                        {clients.map(c => <option key={c.id} value={c.id} style={{ background: '#1e293b' }}>{c.nombreRazonSocial}</option>)}
-                                    </select>
-                                </div>
-                                <div className="input-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, opacity: 0.5, marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                        <User size={14} color="#3b82f6" /> Chofer Asignado
-                                    </label>
-                                    <select value={newTrip.choferId} onChange={e => setNewTrip({ ...newTrip, choferId: e.target.value })} style={{ width: '100%', padding: '1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', color: 'white', borderRadius: '18px', outline: 'none', fontSize: '1rem' }}>
-                                        <option value="" style={{ background: '#1e293b' }}>Seleccionar...</option>
-                                        {drivers.map(d => <option key={d.id} value={d.id} style={{ background: '#1e293b' }}>{d.nombre}</option>)}
-                                    </select>
-                                </div>
-                                <div className="input-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, opacity: 0.5, marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                        <Gauge size={14} color="#3b82f6" /> Unidad
-                                    </label>
-                                    <select value={newTrip.unidadId} onChange={e => setNewTrip({ ...newTrip, unidadId: e.target.value })} style={{ width: '100%', padding: '1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', color: 'white', borderRadius: '18px', outline: 'none', fontSize: '1rem' }}>
-                                        <option value="" style={{ background: '#1e293b' }}>Seleccionar...</option>
-                                        {units.map(u => <option key={u.id} value={u.id} style={{ background: '#1e293b' }}>{u.patente} ({u.marca})</option>)}
-                                    </select>
-                                </div>
-                            </div>
-                        ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2.5rem' }}>
+                        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.01)' }}>
+                            <button type="button" onClick={() => setFormTab('logistica')} className={`form-tab-btn ${formTab === 'logistica' ? 'active' : ''}`} style={{ padding: '1rem', flex: 1 }}>
+                                <span style={{ marginRight: '8px', opacity: 0.5 }}>01</span> LOGÍSTICA
+                            </button>
+                            <button type="button" onClick={() => setFormTab('carga')} className={`form-tab-btn ${formTab === 'carga' ? 'active' : ''}`} style={{ padding: '1rem', flex: 1 }}>
+                                <span style={{ marginRight: '8px', opacity: 0.5 }}>02</span> CARGA Y DESTINO
+                            </button>
+                        </div>
+
+                        <div className="drawer-body">
+                            {formTab === 'logistica' ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, opacity: 0.5, marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                            <Package size={14} color="#3b82f6" /> Mercadería
-                                        </label>
-                                        <input type="text" placeholder="Ej: Contenedor" value={newTrip.mercaderiaTipo} onChange={e => setNewTrip({ ...newTrip, mercaderiaTipo: e.target.value })} style={{ width: '100%', padding: '1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', color: 'white', borderRadius: '18px', outline: 'none', fontSize: '1rem' }} />
+                                        <label><Layers size={14} color="#3b82f6" /> Dador de Carga</label>
+                                        <select value={newTrip.clientId} onChange={e => setNewTrip({ ...newTrip, clientId: e.target.value })} className="form-input">
+                                            <option value="" style={{ background: '#1e293b' }}>Seleccionar...</option>
+                                            {clients.map(c => <option key={c.id} value={c.id} style={{ background: '#1e293b' }}>{c.nombreRazonSocial}</option>)}
+                                        </select>
                                     </div>
                                     <div className="input-group">
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, color: '#4ade80', marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                            <Weight size={14} /> Peso (Ton)
-                                        </label>
-                                        <input type="number" placeholder="0.00" value={newTrip.pesoToneladas || ''} onChange={e => setNewTrip({ ...newTrip, pesoToneladas: Number(e.target.value) })} style={{ width: '100%', padding: '1.2rem', background: 'rgba(34, 197, 94, 0.03)', border: '1px solid rgba(34, 197, 94, 0.15)', color: '#4ade80', borderRadius: '18px', outline: 'none', fontWeight: '900', fontSize: '1.1rem', textAlign: 'center' }} />
+                                        <label><User size={14} color="#3b82f6" /> Chofer Asignado</label>
+                                        <select value={newTrip.choferId} onChange={e => setNewTrip({ ...newTrip, choferId: e.target.value })} className="form-input">
+                                            <option value="" style={{ background: '#1e293b' }}>Seleccionar...</option>
+                                            {drivers.map(d => <option key={d.id} value={d.id} style={{ background: '#1e293b' }}>{d.nombre}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="input-group">
+                                        <label><Gauge size={14} color="#3b82f6" /> Unidad</label>
+                                        <select value={newTrip.unidadId} onChange={e => setNewTrip({ ...newTrip, unidadId: e.target.value })} className="form-input">
+                                            <option value="" style={{ background: '#1e293b' }}>Seleccionar...</option>
+                                            {units.map(u => <option key={u.id} value={u.id} style={{ background: '#1e293b' }}>{u.patente} ({u.marca})</option>)}
+                                        </select>
                                     </div>
                                 </div>
-                                <div className="input-group">
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, opacity: 0.5, marginBottom: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                        <MapPin size={14} color="#3b82f6" /> Destino
-                                    </label>
-                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                        <input type="text" placeholder="Ciudad o Planta..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ flex: 1, padding: '1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', color: 'white', borderRadius: '18px', outline: 'none', fontSize: '1rem' }} />
-                                        <button onClick={handleSearchAddress} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '18px', padding: '0 1.5rem', color: 'white', cursor: 'pointer' }}>
-                                            {isSearching ? <Loader2 className="animate-spin" size={20} /> : <Search size={20} />}
-                                        </button>
-                                    </div>
-                                    {searchResults.length > 0 && (
-                                        <div style={{ background: '#1e293b', borderRadius: '14px', marginTop: '0.5rem', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)' }}>
-                                            {searchResults.map(r => (
-                                                <button
-                                                    key={r.place_id}
-                                                    onClick={() => selectLocation(r.lat, r.lon, r.display_name)}
-                                                    style={{ width: '100%', textAlign: 'left', padding: '1rem', background: 'none', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white', fontSize: '0.75rem', cursor: 'pointer', transition: 'background 0.2s' }}
-                                                    onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                                                    onMouseOut={e => e.currentTarget.style.background = 'none'}
-                                                >
-                                                    {r.display_name}
-                                                </button>
-                                            ))}
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                                        <div className="input-group">
+                                            <label><Package size={14} color="#3b82f6" /> Mercadería</label>
+                                            <input type="text" placeholder="Ej: Contenedor" value={newTrip.mercaderiaTipo} onChange={e => setNewTrip({ ...newTrip, mercaderiaTipo: e.target.value })} className="form-input" />
                                         </div>
-                                    )}
-                                    <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#3b82f6', fontWeight: 700 }}>📍 {selectedAddressLabel}</div>
+                                        <div className="input-group">
+                                            <label style={{ color: '#4ade80' }}><Weight size={14} /> Peso (Ton)</label>
+                                            <input type="number" placeholder="0.0" value={newTrip.pesoToneladas || ''} onChange={e => setNewTrip({ ...newTrip, pesoToneladas: Number(e.target.value) })} className="form-input" style={{ background: 'rgba(34, 197, 94, 0.05)', borderColor: 'rgba(34, 197, 94, 0.2)', color: '#4ade80', fontWeight: 900, textAlign: 'center' }} />
+                                        </div>
+                                    </div>
+                                    <div className="input-group">
+                                        <label><MapPin size={14} color="#3b82f6" /> Destino Final</label>
+                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <input type="text" placeholder="Buscar ciudad o planta..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="form-input" style={{ flex: 1 }} />
+                                            <button onClick={handleSearchAddress} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '16px', padding: '0 1rem', color: 'white', cursor: 'pointer' }}>
+                                                {isSearching ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />}
+                                            </button>
+                                        </div>
+                                        {searchResults.length > 0 && (
+                                            <div style={{ background: '#1e293b', borderRadius: '14px', marginTop: '0.75rem', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 12px 24px -6px rgba(0,0,0,0.4)' }}>
+                                                {searchResults.map(r => (
+                                                    <button key={r.place_id} onClick={() => selectLocation(r.lat, r.lon, r.display_name)} style={{ width: '100%', textAlign: 'left', padding: '1rem', background: 'none', border: 'none', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white', fontSize: '0.75rem', cursor: 'pointer' }}>
+                                                        {r.display_name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '8px', padding: '0.85rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px', border: '1px dashed rgba(59, 130, 246, 0.3)' }}>
+                                            <span style={{ fontSize: '1.2rem' }}>📍</span>
+                                            <span style={{ fontSize: '0.8rem', color: '#60a5fa', fontWeight: 700 }}>{selectedAddressLabel}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
 
-                        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'flex-end', marginTop: '4rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2.5rem' }}>
-                            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'flex-end', marginTop: '4rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2.5rem' }}>
-                                <button type="button" onClick={() => setShowModal(false)} className="btn-secondary" style={{ padding: '1.1rem 2.5rem', borderRadius: '16px', fontWeight: 700 }}>CANCELAR</button>
+                        <div className="drawer-footer">
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button type="button" onClick={() => setShowModal(false)} className="btn-secondary" style={{ flex: 1, padding: '1rem', borderRadius: '14px', fontWeight: 700, background: 'rgba(255,255,255,0.05)', color: 'white', border: 'none' }}>CANCELAR</button>
                                 {formTab === 'logistica' ? (
-                                    <button type="button" onClick={() => setFormTab('carga')} className="btn-primary" style={{ padding: '1.1rem 3.5rem', borderRadius: '16px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>
-                                        SIGUIENTE <ArrowRight size={20} />
+                                    <button type="button" onClick={() => setFormTab('carga')} className="btn-primary" style={{ flex: 2, padding: '1rem', borderRadius: '14px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', background: 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none' }}>
+                                        SIGUIENTE <ArrowRight size={18} />
                                     </button>
                                 ) : (
-                                    <button onClick={executeCreate} className="btn-primary" style={{ padding: '1.1rem 4rem', borderRadius: '16px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.75rem', background: confirmingTripId ? 'linear-gradient(135deg, #3b82f6, #6366f1)' : 'linear-gradient(135deg, #22c55e, #16a34a)', color: 'white', boxShadow: confirmingTripId ? '0 10px 20px -5px rgba(59, 130, 246, 0.4)' : '0 10px 20px -5px rgba(34, 197, 94, 0.4)' }}>
-                                        <Save size={20} /> {confirmingTripId ? 'CONFIRMAR ASIGNACIÓN' : 'DESPACHAR VIAJE'}
+                                    <button onClick={executeCreate} className="btn-primary" style={{ flex: 2, padding: '1rem', borderRadius: '14px', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', background: confirmingTripId ? 'linear-gradient(135deg, #3b82f6, #6366f1)' : 'linear-gradient(135deg, #22c55e, #16a34a)', color: 'white', border: 'none', boxShadow: '0 8px 20px -5px rgba(0,0,0,0.2)' }}>
+                                        <Save size={18} /> {confirmingTripId ? 'CONFIRMAR ASIGNACIÓN' : 'DESPACHAR VIAJE'}
                                     </button>
                                 )}
                             </div>
