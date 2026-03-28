@@ -61,14 +61,14 @@ export class GpsTrackingService {
         if (velocidad > 90) {
             // Aviso al Cliente Logístico (Tenant)
             const admin = await this.tripsService.getTenantAdmin(trip.tenantId);
-            
+
             if (admin?.telegramChatId) {
                 const msgAdmin = `🚩 *EXCESO DE VELOCIDAD DETECTADO*\n` +
-                               `Chofer: ${trip.chofer?.nombre}\n` +
-                               `Unidad: ${trip.unidad?.patente}\n` +
-                               `Velocidad: *${Math.round(velocidad)} km/h*\n` +
-                               `Viaje: ${trip.numeroCP}\n` +
-                               `Ubicación: [Ver en Mapa](https://www.google.com/maps?q=${lat},${lng})`;
+                    `Chofer: ${trip.chofer?.nombre}\n` +
+                    `Unidad: ${trip.unidad?.patente}\n` +
+                    `Velocidad: *${Math.round(velocidad)} km/h*\n` +
+                    `Viaje: ${trip.numeroCP}\n` +
+                    `Ubicación: [Ver en Mapa](https://www.google.com/maps?q=${lat},${lng})`;
                 await this.telegramService.sendMessage(admin.telegramChatId, msgAdmin);
             }
 
@@ -84,11 +84,20 @@ export class GpsTrackingService {
         let distanceToDest = 0;
         if (trip.destinoLat && trip.destinoLng) {
             distanceToDest = await this.tripsService.getDistance(lat, lng, Number(trip.destinoLat), Number(trip.destinoLng));
-            
+
             // Regla: Si entra en la Geofence_Destino (< radioGeocercaKm)
             if (distanceToDest < (trip.radioGeocercaKm * 1000)) {
                 if (!trip.reachedDestination) {
                     trip.reachedDestination = true;
+
+                    // Registrar hito de llegada automática para auditoría
+                    await this.tripsService.createAuditLog({
+                        tenantId: trip.tenantId,
+                        accion: 'AUTO_LLEGADA',
+                        descripcion: `Sistema detectó llegada a geocerca (${distanceToDest.toFixed(0)}m)`,
+                        dataNueva: JSON.stringify({ tripId: trip.id, lat, lng, distanceToDest })
+                    });
+
                     // REGLA: Hito de auditoría interno - Marcamos como ENTREGADO
                     // Pero NO cerramos el viaje, eso lo hace el chofer.
                     if (trip.estado === TripStatus.IN_PROGRESS || trip.estado === TripStatus.LLEGUE || trip.estado === TripStatus.CARGA_DESCARGA) {
@@ -109,7 +118,7 @@ export class GpsTrackingService {
                 }
             }
         }
-        
+
         // --- CÁLCULO DE ODÓMETRO (Kilómetros recorridos) ---
         // Recuperamos el último ping para calcular el delta de distancia (antes de guardar el nuevo)
         const lastPing = await this.gpsRepo.findOne({

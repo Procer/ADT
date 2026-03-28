@@ -61,7 +61,10 @@ export const DriverApp: React.FC = () => {
         clearTrip,
         token,
         user,
-        setUser
+        setUser,
+        localMileage,
+        updateMileage,
+        lastCoords
     } = useTripStore();
 
     const geofenceThreshold = useMemo(() => {
@@ -237,6 +240,25 @@ export const DriverApp: React.FC = () => {
                                 timestamp_dispositivo: Date.now(),
                                 tipo_registro: 'AUTOMATICO'
                             });
+                        }
+
+                        // --- CÁLCULO DE KILOMETRAJE LOCAL (Real-time PWA) ---
+                        if (status === 'EN_CAMINO' && lastCoords) {
+                            const deltaMts = calculateDistance(latitude, longitude, lastCoords.lat, lastCoords.lng);
+                            // Validar delta: > 10m (movimiento real) y < 2000m (filtro de saltos GPS)
+                            if (deltaMts > 10 && deltaMts < 2000) {
+                                updateMileage(deltaMts / 1000, { lat: latitude, lng: longitude });
+                            }
+                        } else if (!lastCoords) {
+                            // Inicializar lastCoords si no existe
+                            updateMileage(0, { lat: latitude, lng: longitude });
+                        }
+
+                        // --- LÓGICA DE LLEGADA AUTOMÁTICA ---
+                        if (status === 'EN_CAMINO' && currentDist > 0 && currentDist < geofenceThreshold) {
+                            console.log(`[PWA] Llegada automática detectada (${currentDist.toFixed(0)}m)`);
+                            handleAction('LLEGUE');
+                            showToast('Llegada registrada automáticamente', 'success');
                         }
 
                         const isMoving = (speed || 0) * 3.6 > 5;
@@ -533,7 +555,7 @@ export const DriverApp: React.FC = () => {
                                         <div className="text-center border-x border-slate-200">
                                             <p className="text-[8px] font-bold text-slate-400 uppercase leading-none mb-1">Recorrido</p>
                                             <p className="text-lg font-black text-indigo-600">
-                                                {destination?.mileage ? Number(destination.mileage).toFixed(1) : '0.0'} <span className="text-[10px]">km</span>
+                                                {localMileage ? Number(localMileage).toFixed(1) : '0.0'} <span className="text-[10px]">km</span>
                                             </p>
                                         </div>
                                         <div className="text-center">

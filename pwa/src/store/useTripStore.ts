@@ -40,6 +40,8 @@ interface TripState {
     } | null;
     nextTrip: TripDetails | null;
     syncQueue: any[];
+    localMileage: number;
+    lastCoords: { lat: number, lng: number } | null;
 
     setUser: (user: User | null, token: string | null, tenantConfig?: any) => void;
     setTrip: (tripId: string, destination: {
@@ -52,6 +54,7 @@ interface TripState {
     }) => void;
     setNextTrip: (trip: TripDetails | null) => void;
     updateStatus: (status: TripStatus) => void;
+    updateMileage: (deltaKm: number, coords: { lat: number, lng: number }) => void;
     addToSyncQueue: (event: any) => void;
     removeFromSyncQueue: (eventId: string) => void;
     clearTrip: () => void;
@@ -78,6 +81,8 @@ export const useTripStore = create<TripState>()(
             destination: null,
             nextTrip: null,
             syncQueue: [],
+            localMileage: 0,
+            lastCoords: null,
 
             setUser: (user, token, tenantConfig) => set({
                 user,
@@ -93,7 +98,9 @@ export const useTripStore = create<TripState>()(
                     endTime: null,
                     destination: null,
                     nextTrip: null,
-                    tenantConfig: null
+                    tenantConfig: null,
+                    localMileage: 0,
+                    lastCoords: null
                 } : {})
             }),
 
@@ -102,7 +109,9 @@ export const useTripStore = create<TripState>()(
                 destination,
                 // Al cargar un viaje nuevo, se queda en PENDING esperando el INICIAR VIAJE manual
                 status: 'PENDING',
-                startTime: null // Se seteará al darle INICIAR
+                startTime: null, // Se seteará al darle INICIAR
+                localMileage: Number(destination.mileage || 0),
+                lastCoords: null
             }),
 
             setNextTrip: (nextTrip) => set({ nextTrip }),
@@ -115,6 +124,11 @@ export const useTripStore = create<TripState>()(
                 if (status === 'FINALIZADO') updates.endTime = Date.now();
                 return updates;
             }),
+
+            updateMileage: (deltaKm, coords) => set((state) => ({
+                localMileage: state.localMileage + deltaKm,
+                lastCoords: coords
+            })),
 
             addToSyncQueue: (event) => set((state) => {
                 const id = typeof crypto.randomUUID === 'function'

@@ -303,7 +303,7 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
             {!isMobile ? (
                 <div className="glass-panel" style={{ borderRadius: '24px', overflow: 'hidden' }}>
                     <table>
-                        <thead><tr style={{ background: 'rgba(255,255,255,0.02)' }}><th>N° CP</th><th>Cliente</th><th>Chofer / Unidad</th><th>Carga / Peso</th><th>Estado</th><th></th></tr></thead>
+                        <thead><tr style={{ background: 'rgba(255,255,255,0.02)' }}><th>N° CP</th><th>Cliente</th><th>Chofer / Unidad</th><th>Carga / Peso</th><th>Destino</th><th>KM</th><th>Estado</th><th></th></tr></thead>
                         <tbody>
                             {trips.map((trip, i) => {
                                 const style = getStatusStyle(trip.estado);
@@ -331,6 +331,8 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                         <td id={i === 0 ? 'tour-col-cliente' : ''} style={{ fontWeight: 700 }}>{trip.client?.nombreRazonSocial}</td>
                                         <td><div style={{ fontWeight: 600 }}>{trip.chofer?.nombre}</div><div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{trip.unidad?.patente}</div></td>
                                         <td id={i === 0 ? 'tour-col-peso' : ''}><div>{trip.mercaderiaTipo || 'General'}</div><div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#4ade80' }}>{peso.toFixed(1)} Ton ({(peso * 1000).toLocaleString()} Kg)</div></td>
+                                        <td style={{ maxWidth: '150px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.75rem', opacity: 0.8 }}>{trip.destinoNombre}</td>
+                                        <td style={{ fontWeight: 700, color: '#6366f1' }}>{Number(trip.distanciaTotalRecorridaKm || 0).toFixed(1)}</td>
                                         <td><span id={i === 0 ? 'tour-viajes-estados' : ''} style={{ padding: '0.25rem 0.5rem', background: style.bg, color: style.color, borderRadius: '6px', fontSize: '0.6rem', fontWeight: 800 }}>{style.label}</span></td>
                                         <td style={{ textAlign: 'right' }}><div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
                                             {trip.estado === 'SOLICITADO' && (
@@ -387,6 +389,10 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
                                     <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{trip.mercaderiaTipo || 'General'}</div>
                                     <div style={{ fontWeight: 800, color: '#4ade80', fontSize: '0.75rem' }}>{peso.toFixed(1)} Ton ({(peso * 1000).toLocaleString()} Kg)</div>
                                 </div>
+                                <div style={{ marginTop: '0.75rem', fontSize: '0.7rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: 0.8 }}>
+                                    <div style={{ maxWidth: '70%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><MapPin size={10} style={{ marginRight: '4px' }} /> {trip.destinoNombre}</div>
+                                    <div style={{ fontWeight: 800, color: '#6366f1' }}>{Number(trip.distanciaTotalRecorridaKm || 0).toFixed(1)} KM</div>
+                                </div>
                                 <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
                                     <button onClick={() => setSelectedTripId(trip.id)} className="btn-command-txt" style={{ flex: 1, justifyContent: 'center', background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' }}><MapIcon size={14} /> Seguimiento</button>
                                     <button onClick={() => { const m = window.prompt('Motivo:'); if (m) handleCancel(trip.id, m); }} className="btn-command-txt" style={{ justifyContent: 'center', background: 'rgba(239, 68, 68, 0.15)', color: '#f87171' }}><XCircle size={14} /> Anular</button>
@@ -399,7 +405,7 @@ export default function Viajes({ tenantId }: { tenantId: string | null }) {
 
             {/* SIDE DRAWER DESPACHO (ANTIGUO MODAL) */}
             {showModal && (
-                <div className="drawer-overlay" onClick={(e) => { if(e.target === e.currentTarget) setShowModal(false); }}>
+                <div className="drawer-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
                     <style>{`
                         .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 1100; display: flex; justify-content: flex-end; }
                         .drawer-content { background: #1e293b; width: 100%; max-width: 600px; height: 100%; display: flex; flex-direction: column; border-left: 1px solid rgba(255,255,255,0.05); animation: slideIn 0.3s ease-out forwards; }
