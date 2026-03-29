@@ -34,5 +34,13 @@ export class UpdateTripStatusDto {
 
     @IsOptional()
     @IsString()
+    tipo_registro?: string;
+
+    @IsOptional()
+    @IsString()
+    evento_manual?: string;
+
+    @IsOptional()
+    @IsString()
     comentario?: string;
 }

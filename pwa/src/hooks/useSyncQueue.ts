@@ -36,6 +36,7 @@ export function useSyncQueue() {
                             timestamp: new Date(event.timestamp_dispositivo).toISOString(),
                             tipo_registro: event.tipo_registro || 'AUTOMATICO',
                             cierre_interno_disparado: event.cierre_interno_disparado || false,
+                            kilometers: event.kilometers,
                             metadata: event.metadata || ''
                         };
                     } else if (event.type.startsWith('STATUS_CHANGE_')) {
@@ -47,11 +48,11 @@ export function useSyncQueue() {
 
                         payload = {
                             estado: mappedStatus,
-                            lat: event.coords?.lat,
-                            lng: event.coords?.lng,
+                            lat: event.coords?.lat || event.coords?.latitude,
+                            lng: event.coords?.lng || event.coords?.longitude,
                             fuera_de_rango: event.fuera_de_rango || false,
                             timestamp: new Date(event.timestamp_dispositivo).toISOString(),
-                            tipo_registro: 'MANUAL',
+                            tipo_registro: event.tipo_registro || 'MANUAL',
                             evento_manual: event.evento_manual || newStatus
                         };
                     } else if (event.type === 'PHOTO_UPLOAD') {

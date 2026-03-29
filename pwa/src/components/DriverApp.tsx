@@ -229,6 +229,7 @@ export const DriverApp: React.FC = () => {
                                 speed: speed || 0,
                                 timestamp_dispositivo: Date.now(),
                                 cierre_interno_disparado: true,
+                                kilometers: localMileage,
                                 metadata: JSON.stringify({ event: 'ALEJAMIENTO_10KM', battery: 'unknown' })
                             });
                         } else {
@@ -238,7 +239,8 @@ export const DriverApp: React.FC = () => {
                                 coords: { latitude, longitude },
                                 speed: speed || 0,
                                 timestamp_dispositivo: Date.now(),
-                                tipo_registro: 'AUTOMATICO'
+                                tipo_registro: 'AUTOMATICO',
+                                kilometers: localMileage
                             });
                         }
 
@@ -257,7 +259,7 @@ export const DriverApp: React.FC = () => {
                         // --- LÓGICA DE LLEGADA AUTOMÁTICA ---
                         if (status === 'EN_CAMINO' && currentDist > 0 && currentDist < geofenceThreshold) {
                             console.log(`[PWA] Llegada automática detectada (${currentDist.toFixed(0)}m)`);
-                            handleAction('LLEGUE');
+                            handleAction('LLEGUE', 'AUTOMATICO');
                             showToast('Llegada registrada automáticamente', 'success');
                         }
 
@@ -280,7 +282,7 @@ export const DriverApp: React.FC = () => {
         return () => { if (watchId.current) navigator.geolocation.clearWatch(watchId.current); };
     }, [status, destination]);
 
-    const handleAction = async (nextStatus: TripStatus) => {
+    const handleAction = async (nextStatus: TripStatus, tipoRegistro: 'MANUAL' | 'AUTOMATICO' = 'MANUAL') => {
         triggerHaptic('heavy');
         setLoadingTrip(true);
         logToBackend('INFO', `Acción Chofer: ${nextStatus}`, { tripId });
@@ -309,7 +311,7 @@ export const DriverApp: React.FC = () => {
             type: `STATUS_CHANGE_${nextStatus}`,
             coords: coords,
             timestamp_dispositivo: Date.now(),
-            tipo_registro: 'MANUAL',
+            tipo_registro: tipoRegistro,
             evento_manual: nextStatus
         };
 

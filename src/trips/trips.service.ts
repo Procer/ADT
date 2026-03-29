@@ -306,7 +306,7 @@ export class TripsService {
     }
 
     async updateStatus(tripId: string, dto: UpdateTripStatusDto, userRole?: string): Promise<CartaPorte> {
-        const { estado, lat, lng, fuera_de_rango } = dto;
+        const { estado, lat, lng, fuera_de_rango, tipo_registro, evento_manual } = dto;
 
         const trip = await this.tripsRepo.findOne({ where: { id: tripId }, relations: ['chofer', 'unidad'] });
         if (!trip) throw new NotFoundException('Viaje no encontrado');
@@ -355,13 +355,15 @@ export class TripsService {
         const accionTipo = userRole === 'TENANT_ADMIN' || userRole === 'SUPER_ADMIN' ? 'CAMBIO_ESTADO_ADMIN' : 'CAMBIO_ESTADO_CHOFER';
 
         // Registrar hito con coordenadas si vienen en el DTO (vienen de la PWA del chofer)
+        const esAuto = tipo_registro === 'AUTOMATICO';
         await this.auditRepo.save({
-            accion: accionTipo,
-            descripcion: `${actor} cambió el estado a ${estado}`,
+            accion: esAuto ? 'AUTO_LLEGADA' : accionTipo,
+            descripcion: esAuto ? `Sistema detectó llegada automática (${estado})` : `${actor} cambió el estado a ${estado}`,
             dataNueva: JSON.stringify({
                 tripId,
                 estado,
-                coords: lat && lng ? { lat, lng } : null
+                coords: lat && lng ? { lat, lng } : null,
+                evento_manual: evento_manual || estado
             }),
             tenantId: trip.tenantId
         });
@@ -609,8 +611,10 @@ export class TripsService {
 
             const esCreacion = a.accion.includes('CREACIÓN');
             const esAdmin = a.accion.includes('ADMIN');
+            const esAutoLlegada = a.accion === 'AUTO_LLEGADA';
+
             const hito = {
-                tipo: esCreacion ? 'TRIP_CREATED' : (esAdmin ? 'HITO_ADMIN' : 'HITO_CHOFER'),
+                tipo: esCreacion ? 'TRIP_CREATED' : (esAdmin ? 'HITO_ADMIN' : (esAutoLlegada ? 'AUTO_LLEGADA' : 'HITO_CHOFER')),
                 fecha: a.fecha,
                 accion: a.accion,
                 descripcion: a.descripcion,

@@ -31,5 +31,9 @@ export class CreateGpsPingDto {
     cierre_interno_disparado?: boolean;
 
     @IsOptional()
+    @IsNumber()
+    kilometers?: number;
+
+    @IsOptional()
     metadata?: string;
 }

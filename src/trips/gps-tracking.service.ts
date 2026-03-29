@@ -48,7 +48,7 @@ export class GpsTrackingService {
     }
 
     async processPingFromQueue(data: any): Promise<GpsTracking> {
-        const { cpId, lat, lng, velocidad, timestamp, tipo_registro, evento_manual, cierre_interno_disparado } = data;
+        const { cpId, lat, lng, velocidad, timestamp, tipo_registro, evento_manual, cierre_interno_disparado, kilometers } = data;
 
         const trip = await this.tripsRepo.findOne({
             where: { id: cpId },
@@ -120,25 +120,28 @@ export class GpsTrackingService {
         }
 
         // --- CÁLCULO DE ODÓMETRO (Kilómetros recorridos) ---
-        // Recuperamos el último ping para calcular el delta de distancia (antes de guardar el nuevo)
-        const lastPing = await this.gpsRepo.findOne({
-            where: { cpId },
-            order: { timestampDispositivo: 'DESC' }
-        });
+        // Si la PWA envía kilometraje acumulado, lo usamos como fuente prioritaria de verdad
+        if (kilometers !== undefined && kilometers > (trip.distanciaTotalRecorridaKm || 0)) {
+            trip.distanciaTotalRecorridaKm = Number(kilometers);
+            await this.tripsRepo.save(trip);
+        } else {
+            // De lo contrario, cálculo por delta de GPS (Backup)
+            const lastPing = await this.gpsRepo.findOne({
+                where: { cpId },
+                order: { timestampServidor: 'DESC' }
+            });
 
-        if (lastPing && trip.estado === TripStatus.IN_PROGRESS) {
-            const distanceDeltaMts = await this.tripsService.getDistance(
-                lat, lng,
-                Number(lastPing.latitud), Number(lastPing.longitud)
-            );
+            if (lastPing && trip.estado === TripStatus.IN_PROGRESS) {
+                const distanceDeltaMts = await this.tripsService.getDistance(
+                    lat, lng,
+                    Number(lastPing.latitud), Number(lastPing.longitud)
+                );
 
-            // Evitar saltos erráticos por error de GPS (ej. > 5km en pocos segundos)
-            // Estándar logístico: 90km/h = 25m/s. Un ping cada 10s son 250m. 5000m es margen de seguridad alto.
-            if (distanceDeltaMts > 0 && distanceDeltaMts < 5000) {
-                const deltaKm = distanceDeltaMts / 1000;
-                trip.distanciaTotalRecorridaKm = Number(trip.distanciaTotalRecorridaKm || 0) + deltaKm;
-                // Guardamos el progreso en el viaje
-                await this.tripsRepo.save(trip);
+                if (distanceDeltaMts > 0 && distanceDeltaMts < 5000) {
+                    const deltaKm = distanceDeltaMts / 1000;
+                    trip.distanciaTotalRecorridaKm = Number(trip.distanciaTotalRecorridaKm || 0) + deltaKm;
+                    await this.tripsRepo.save(trip);
+                }
             }
         }
 
