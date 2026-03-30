@@ -4,7 +4,7 @@ import { API_BASE_URL } from './config';
 
 export const logToBackend = async (level: 'INFO' | 'ERROR', message: string, context: any = {}) => {
     try {
-        const driverData = JSON.parse(localStorage.getItem('trip-store') || '{}');
+        const driverData = JSON.parse(localStorage.getItem('trip-storage') || '{}');
         const driverId = driverData?.state?.user?.id || 'Unknown';
 
         await axios.post(`${API_BASE_URL}/management/pwa-logs`, {

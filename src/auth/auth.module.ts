@@ -17,7 +17,7 @@ import { AuditLog } from '../database/entities/audit-log.entity';
         PassportModule,
         JwtModule.register({
             secret: 'SECRET_KEY_ADT_2026',
-            signOptions: { expiresIn: '24h' },
+            signOptions: { expiresIn: '60d' },
         }),
     ],
     providers: [AuthService, JwtStrategy],

@@ -727,6 +727,10 @@ export class TripsService {
     }
 
     async findAll(tenantId: string, filters?: any): Promise<CartaPorte[]> {
+        if (!tenantId || tenantId === 'undefined' || tenantId === 'null' || tenantId === '') {
+            return [];
+        }
+
         const query: any = { tenantId };
         if (filters?.choferId) query.choferId = filters.choferId;
         if (filters?.clientId) query.clientId = filters.clientId;
@@ -791,6 +795,12 @@ export class TripsService {
     }
 
     async getDistance(lat1: number, lng1: number, lat2: number, lng2: number): Promise<number> {
+        // Protección contra valores nulos que rompen geography::Point en MSSQL
+        if (lat1 === null || lat1 === undefined || lng1 === null || lng1 === undefined ||
+            lat2 === null || lat2 === undefined || lng2 === null || lng2 === undefined) {
+            return 0;
+        }
+
         const result = await this.tripsRepo.query(
             `SELECT geography::Point(@0, @1, 4326).STDistance(geography::Point(@2, @3, 4326)) as distance`,
             [lat1, lng1, lat2, lng2]

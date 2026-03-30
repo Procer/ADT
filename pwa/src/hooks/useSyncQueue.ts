@@ -30,8 +30,8 @@ export function useSyncQueue() {
                         endpoint = `${API_BASE_URL}/trips/ping`;
                         payload = {
                             tripId: tripId,
-                            latitude: event.coords.latitude,
-                            longitude: event.coords.longitude,
+                            lat: event.coords.latitude,
+                            lng: event.coords.longitude,
                             speed: event.speed,
                             timestamp: new Date(event.timestamp_dispositivo).toISOString(),
                             tipo_registro: event.tipo_registro || 'AUTOMATICO',
@@ -70,17 +70,21 @@ export function useSyncQueue() {
                             removeFromSyncQueue(event.id);
                         } catch (error: any) {
                             const status = error.response?.status;
-                            // Si es 401, 404 o 400, el evento es inválido/obsoleto, lo eliminamos
-                            if (status === 401 || status === 404 || status === 400) {
+                            if (status === 401) {
+                                console.error(`[SyncQueue] Token expirado (401). Pausando sincronización y forzando login.`);
+                                useTripStore.getState().setUser(null, null);
+                                break;
+                            }
+                            if (status === 404 || status === 400) {
                                 console.warn(`[SyncQueue] Descartando evento ${event.type} por error ${status}`, error.response?.data);
                                 removeFromSyncQueue(event.id);
                                 continue;
                             }
-                            throw error; // Re-lanzar para detener la cola en otros errores (ej. 500 o red)
+                            throw error;
                         }
                     }
                 } catch (error: any) {
-                    // Si hay error de red o de auth (401), detenemos el procesamiento de la cola
+                    // Si hay error de red, detenemos el procesamiento de la cola
                     break;
                 }
             }

@@ -48,7 +48,13 @@ export class GpsTrackingService {
     }
 
     async processPingFromQueue(data: any): Promise<GpsTracking> {
-        const { cpId, lat, lng, velocidad, timestamp, tipo_registro, evento_manual, cierre_interno_disparado, kilometers } = data;
+        const { cpId, velocidad, timestamp, tipo_registro, evento_manual, cierre_interno_disparado, kilometers } = data;
+        const lat = Number(data.lat !== undefined ? data.lat : data.latitude);
+        const lng = Number(data.lng !== undefined ? data.lng : data.longitude);
+
+        if (isNaN(lat) || isNaN(lng)) {
+            throw new Error(`Invalid coordinates for trip ${cpId}: lat=${lat}, lng=${lng}`);
+        }
 
         const trip = await this.tripsRepo.findOne({
             where: { id: cpId },
