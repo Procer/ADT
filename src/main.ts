@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DataSource } from 'typeorm';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import * as dotenv from 'dotenv';
 
@@ -10,6 +11,12 @@ process.env.TZ = 'UTC';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Habilitar Validación Global de DTOs
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+  }));
 
   // Registrar Filtro Global de Errores con PERSISTENCIA EN DB
   const dataSource = app.get(DataSource);

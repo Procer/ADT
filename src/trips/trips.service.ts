@@ -795,9 +795,12 @@ export class TripsService {
     }
 
     async getDistance(lat1: number, lng1: number, lat2: number, lng2: number): Promise<number> {
-        // Protección contra valores nulos que rompen geography::Point en MSSQL
-        if (lat1 === null || lat1 === undefined || lng1 === null || lng1 === undefined ||
-            lat2 === null || lat2 === undefined || lng2 === null || lng2 === undefined) {
+        if (
+            lat1 === null || lat1 === undefined || isNaN(Number(lat1)) ||
+            lng1 === null || lng1 === undefined || isNaN(Number(lng1)) ||
+            lat2 === null || lat2 === undefined || isNaN(Number(lat2)) ||
+            lng2 === null || lng2 === undefined || isNaN(Number(lng2))
+        ) {
             return 0;
         }
 

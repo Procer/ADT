@@ -29,7 +29,7 @@ export function useSyncQueue() {
                     if (event.type === 'GPS_PING') {
                         endpoint = `${API_BASE_URL}/trips/ping`;
                         payload = {
-                            tripId: tripId,
+                            cpId: tripId,
                             lat: event.coords.latitude,
                             lng: event.coords.longitude,
                             speed: event.speed,
