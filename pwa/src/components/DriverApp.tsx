@@ -64,7 +64,6 @@ export const DriverApp: React.FC = () => {
         setUser,
         localMileage,
         updateMileage,
-        lastCoords
     } = useTripStore();
 
     const geofenceThreshold = useMemo(() => {
@@ -221,6 +220,24 @@ export const DriverApp: React.FC = () => {
                             setDistance(currentDist);
                         }
 
+                        // --- CÁLCULO DE KILOMETRAJE LOCAL (Real-time PWA) ---
+                        const state = useTripStore.getState();
+                        const currentLastCoords = state.lastCoords;
+                        const currentMileage = state.localMileage;
+                        let updatedMileage = currentMileage;
+
+                        if (status === 'EN_CAMINO' && currentLastCoords) {
+                            const deltaMts = calculateDistance(latitude, longitude, currentLastCoords.lat, currentLastCoords.lng);
+                            // Validar delta: > 10m (movimiento real) y < 2000m (filtro de saltos GPS)
+                            if (deltaMts > 10 && deltaMts < 2000) {
+                                updatedMileage = currentMileage + (deltaMts / 1000);
+                                updateMileage(deltaMts / 1000, { lat: latitude, lng: longitude });
+                            }
+                        } else if (!currentLastCoords) {
+                            // Inicializar lastCoords si no existe
+                            updateMileage(0, { lat: latitude, lng: longitude });
+                        }
+
                         // REGLA: Cierre Interno por alejamiento (> 10km del destino)
                         if (currentDist > 10000 && (status === 'EN_CAMINO' || status === 'LLEGUE')) {
                             addToSyncQueue({
@@ -229,7 +246,7 @@ export const DriverApp: React.FC = () => {
                                 speed: speed || 0,
                                 timestamp_dispositivo: Date.now(),
                                 cierre_interno_disparado: true,
-                                kilometers: localMileage,
+                                kilometers: updatedMileage,
                                 metadata: JSON.stringify({ event: 'ALEJAMIENTO_10KM', battery: 'unknown' })
                             });
                         } else {
@@ -240,20 +257,8 @@ export const DriverApp: React.FC = () => {
                                 speed: speed || 0,
                                 timestamp_dispositivo: Date.now(),
                                 tipo_registro: 'AUTOMATICO',
-                                kilometers: localMileage
+                                kilometers: updatedMileage
                             });
-                        }
-
-                        // --- CÁLCULO DE KILOMETRAJE LOCAL (Real-time PWA) ---
-                        if (status === 'EN_CAMINO' && lastCoords) {
-                            const deltaMts = calculateDistance(latitude, longitude, lastCoords.lat, lastCoords.lng);
-                            // Validar delta: > 10m (movimiento real) y < 2000m (filtro de saltos GPS)
-                            if (deltaMts > 10 && deltaMts < 2000) {
-                                updateMileage(deltaMts / 1000, { lat: latitude, lng: longitude });
-                            }
-                        } else if (!lastCoords) {
-                            // Inicializar lastCoords si no existe
-                            updateMileage(0, { lat: latitude, lng: longitude });
                         }
 
                         // --- LÓGICA DE LLEGADA AUTOMÁTICA ---

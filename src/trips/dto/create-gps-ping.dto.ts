@@ -1,18 +1,37 @@
-import { IsUUID, IsNumber, IsBoolean, IsISO8601, IsOptional } from 'class-validator';
+import { IsUUID, IsNumber, IsBoolean, IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class CreateGpsPingDto {
     @IsUUID()
-    cpId: string;
+    @IsOptional()
+    cpId?: string;
+
+    @IsUUID()
+    @IsOptional()
+    tripId?: string; // Alias legacy
 
     @IsNumber()
-    lat: number;
+    @IsOptional()
+    lat?: number;
 
     @IsNumber()
-    lng: number;
+    @IsOptional()
+    lng?: number;
+
+    @IsNumber()
+    @IsOptional()
+    latitude?: number; // Alias legacy
+
+    @IsNumber()
+    @IsOptional()
+    longitude?: number; // Alias legacy
 
     @IsNumber()
     @IsOptional()
     velocidad?: number;
+
+    @IsNumber()
+    @IsOptional()
+    speed?: number; // Alias legacy
 
     @IsBoolean()
     @IsOptional()
@@ -22,12 +41,15 @@ export class CreateGpsPingDto {
     timestamp: string;
 
     @IsOptional()
+    @IsString()
     tipo_registro?: string;
 
     @IsOptional()
+    @IsString()
     evento_manual?: string;
 
     @IsOptional()
+    @IsBoolean()
     cierre_interno_disparado?: boolean;
 
     @IsOptional()
@@ -35,5 +57,7 @@ export class CreateGpsPingDto {
     kilometers?: number;
 
     @IsOptional()
+    @IsString()
     metadata?: string;
 }
+

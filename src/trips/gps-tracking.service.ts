@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, forwardRef, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, forwardRef, Inject, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GpsTracking } from '../database/entities/gps-tracking.entity';
@@ -26,7 +26,14 @@ export class GpsTrackingService {
     ) { }
 
     async recordPing(dto: CreateGpsPingDto): Promise<{ status: string }> {
-        const { cpId, lat, lng } = dto;
+        // Normalización de campos alias para compatibilidad retroactiva
+        const cpId = dto.cpId || dto.tripId;
+        const lat = dto.lat !== undefined ? dto.lat : dto.latitude;
+        const lng = dto.lng !== undefined ? dto.lng : dto.longitude;
+        const velocidad = dto.velocidad !== undefined ? dto.velocidad : dto.speed;
+
+        if (!cpId) throw new BadRequestException('cpId (o tripId) es requerido');
+        if (lat === undefined || lng === undefined) throw new BadRequestException('Coordenadas (lat/lng) son requeridas');
 
         const trip = await this.tripsRepo.findOne({
             where: { id: cpId },
@@ -43,9 +50,19 @@ export class GpsTrackingService {
             estado: trip.estado,
         });
 
-        await this.gpsQueue.add('ping-job', dto);
+        // Asegurarnos que el Job en la cola use los campos normalizados
+        const normalizedDto = {
+            ...dto,
+            cpId,
+            lat,
+            lng,
+            velocidad: velocidad ?? 0
+        };
+
+        await this.gpsQueue.add('ping-job', normalizedDto);
         return { status: 'queued' };
     }
+
 
     async processPingFromQueue(data: any): Promise<GpsTracking> {
         const { cpId, velocidad, timestamp, tipo_registro, evento_manual, cierre_interno_disparado, kilometers } = data;
